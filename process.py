@@ -119,9 +119,6 @@ def run():
 		showlegend=False
 	)
 
-	fig.layout.xaxis.fixedrange = True
-	fig.layout.yaxis.fixedrange = True
-
-	config = {'displayModeBar': False}
+	config = {'staticPlot': True}
 
 	fig.write_html('output/output.html', config)
