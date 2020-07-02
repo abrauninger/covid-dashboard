@@ -1,5 +1,5 @@
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objs as go
 
 def run():
 	df = pd.read_csv('covid-19-data/us-counties.csv')
@@ -14,12 +14,28 @@ def run():
 
 	kc['date'] = pd.to_datetime(kc['date'])
 
-	fig = px.bar(kc, x='date', y='new_cases')
+	kc['new_cases_moving_average_7_day'] = kc['new_cases'].rolling(7).mean()
+	kc['new_deaths_moving_average_7_day'] = kc['new_deaths'].rolling(7).mean()
 
-	fig.update_layout(
-		title='New cases in King County',
-		xaxis_title='Date',
-		yaxis_title='New Cases')
+	fig = go.Figure(
+		data=[
+			go.Bar(
+				x=kc['date'],
+				y=kc['new_cases']
+			),
+			go.Scatter(
+				x=kc['date'],
+				y=kc['new_cases_moving_average_7_day']
+			)
+		],
+		layout=go.Layout(
+			title='New cases in King County',
+			xaxis_title='Date',
+			yaxis_title='New Cases'
+		)
+	)
+
+	fig.update_layout()
 
 	fig.write_html('output/output.html')
 
