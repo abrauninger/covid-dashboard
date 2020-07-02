@@ -17,6 +17,9 @@ def run():
 	kc['new_cases_moving_average_7_day'] = kc['new_cases'].rolling(7).mean()
 	kc['new_deaths_moving_average_7_day'] = kc['new_deaths'].rolling(7).mean()
 
+	kc_hosp = pd.read_excel('king-county-data-download/covid-data-daily-counts-june-30.xlsx', sheet_name='Hospitalizations')
+	kc_hosp = kc_hosp[kc_hosp['Admission_Date'].notnull()]
+
 	fig = go.Figure(
 		data=[
 			go.Bar(
@@ -26,6 +29,10 @@ def run():
 			go.Scatter(
 				x=kc['date'],
 				y=kc['new_cases_moving_average_7_day']
+			),
+			go.Scatter(
+				x=kc_hosp['Admission_Date'],
+				y=kc_hosp['Hospitalizations']
 			)
 		],
 		layout=go.Layout(
