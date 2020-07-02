@@ -39,7 +39,7 @@ def run():
 		rows=4, cols=1,
 		shared_xaxes=True,
 		vertical_spacing=0.1,
-		subplot_titles=('New cases', 'Hospitalizations', 'Tests', 'Tests Per Confirmed Case')
+		subplot_titles=('New cases', 'Hospitalizations', 'Tests', 'Tests per confirmed case')
 	)
 
 	fig.add_trace(
@@ -103,8 +103,8 @@ def run():
 	)
 
 	fig.update_layout(
-		title_text='New cases in King County',
-		showlegend=True
+		title_text='COVID-19 metrics in King County, WA',
+		showlegend=False
 	)
 
 	fig.write_html('output/output.html')
