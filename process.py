@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.express as px
 
 def run():
 	df = pd.read_csv('covid-19-data/us-counties.csv')
@@ -13,7 +14,7 @@ def run():
 
 	kc['date'] = pd.to_datetime(kc['date'])
 
-	fig = kc['new_cases'].plot()
+	fig = fig = px.line(kc, x='date', y='new_cases')
 	fig.write_html('output/output.html')
 
 	return kc
