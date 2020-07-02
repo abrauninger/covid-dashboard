@@ -14,7 +14,7 @@ def run():
 
 	kc['date'] = pd.to_datetime(kc['date'])
 
-	fig = fig = px.line(kc, x='date', y='new_cases')
+	fig = px.bar(kc, x='date', y='new_cases')
 	fig.write_html('output/output.html')
 
 	return kc
