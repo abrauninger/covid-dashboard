@@ -31,26 +31,27 @@ def run():
 	kc_test = kc_test[kc_test['Result_Date'].notnull()]
 	kc_test['Moving_Average_7_Day'] = kc_test['Tests'].rolling(7).mean()
 
+	joined = kc.join(kc_test.set_index('Result_Date'), on='date')
+	joined['tests_per_case'] = joined['Moving_Average_7_Day'] / joined['new_cases_moving_average_7_day']
+
 	fig = make_subplots(
-		rows=3, cols=1,
+		rows=4, cols=1,
 		shared_xaxes=True,
 		vertical_spacing=0.1,
-		subplot_titles=('New cases', 'Hospitalizations', 'Tests')
+		subplot_titles=('New cases', 'Hospitalizations', 'Tests', 'Tests Per Confirmed Case')
 	)
 
 	fig.add_trace(
 		go.Bar(
 			x=kc['date'],
-			y=kc['new_cases'],
-			name='New cases'
+			y=kc['new_cases']
 		),
 		row=1, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
 			x=kc['date'],
-			y=kc['new_cases_moving_average_7_day'],
-			name='7-day moving average'
+			y=kc['new_cases_moving_average_7_day']
 		),
 		row=1, col=1
 	)
@@ -58,16 +59,14 @@ def run():
 	fig.add_trace(
 		go.Bar(
 			x=kc_hosp['Admission_Date'],
-			y=kc_hosp['Hospitalizations'],
-			name='Hospitalizations'
+			y=kc_hosp['Hospitalizations']
 		),
 		row=2, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
 			x=kc_hosp['Admission_Date'],
-			y=kc_hosp['Moving_Average_7_Day'],
-			name='7-day moving average'
+			y=kc_hosp['Moving_Average_7_Day']
 		),
 		row=2, col=1
 	)
@@ -75,18 +74,24 @@ def run():
 	fig.add_trace(
 		go.Bar(
 			x=kc_test['Result_Date'],
-			y=kc_test['Tests'],
-			name='Tests'
+			y=kc_test['Tests']
 		),
 		row=3, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
 			x=kc_test['Result_Date'],
-			y=kc_test['Moving_Average_7_Day'],
-			name='7-day moving average'
+			y=kc_test['Moving_Average_7_Day']
 		),
 		row=3, col=1
+	)
+
+	fig.add_trace(
+		go.Scatter(
+			x=joined['date'],
+			y=joined['tests_per_case']
+		),
+		row=4, col=1
 	)
 
 	fig.update_layout(
