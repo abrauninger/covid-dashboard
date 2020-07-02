@@ -90,7 +90,8 @@ def run():
 	)
 
 	fig.update_layout(
-		title_text='New cases in King County'
+		title_text='New cases in King County',
+		showlegend=False
 	)
 
 	fig.write_html('output/output.html')
