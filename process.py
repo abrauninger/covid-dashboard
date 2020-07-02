@@ -119,6 +119,9 @@ def run():
 		showlegend=False
 	)
 
-	fig.write_html('output/output.html')
+	fig.layout.xaxis.fixedrange = True
+	fig.layout.yaxis.fixedrange = True
 
-	return kc
+	config = {'displayModeBar': False}
+
+	fig.write_html('output/output.html', config)
