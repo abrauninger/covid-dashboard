@@ -1,6 +1,9 @@
 import pandas as pd
 import plotly.graph_objs as go
 
+from plotly.subplots import make_subplots
+
+
 def run():
 	df = pd.read_csv('covid-19-data/us-counties.csv')
 
@@ -20,29 +23,43 @@ def run():
 	kc_hosp = pd.read_excel('king-county-data-download/covid-data-daily-counts-june-30.xlsx', sheet_name='Hospitalizations')
 	kc_hosp = kc_hosp[kc_hosp['Admission_Date'].notnull()]
 
-	fig = go.Figure(
-		data=[
-			go.Bar(
-				x=kc['date'],
-				y=kc['new_cases']
-			),
-			go.Scatter(
-				x=kc['date'],
-				y=kc['new_cases_moving_average_7_day']
-			),
-			go.Scatter(
-				x=kc_hosp['Admission_Date'],
-				y=kc_hosp['Hospitalizations']
-			)
-		],
-		layout=go.Layout(
-			title='New cases in King County',
-			xaxis_title='Date',
-			yaxis_title='New Cases'
-		)
+	fig = make_subplots(
+		rows=2, cols=1,
+		shared_xaxes=True,
+		vertical_spacing=0.1,
+		subplot_titles=('New cases', 'Hospitalizations')
 	)
 
-	fig.update_layout()
+	fig.add_trace(
+		go.Bar(
+			x=kc['date'],
+			y=kc['new_cases'],
+			name='New cases'
+		),
+		row=1, col=1
+	)
+
+	fig.add_trace(
+		go.Scatter(
+			x=kc['date'],
+			y=kc['new_cases_moving_average_7_day'],
+			name='7-day moving average'
+		),
+		row=1, col=1
+	)
+
+	fig.add_trace(
+		go.Scatter(
+			x=kc_hosp['Admission_Date'],
+			y=kc_hosp['Hospitalizations'],
+			name='Hospitalizations'
+		),
+		row=2, col=1
+	)
+
+	fig.update_layout(
+		title_text='New cases in King County'
+	)
 
 	fig.write_html('output/output.html')
 
