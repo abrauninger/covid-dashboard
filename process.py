@@ -25,9 +25,11 @@ def run():
 
 	kc_hosp = pd.read_excel(kc_xlsx_file, sheet_name='Hospitalizations')
 	kc_hosp = kc_hosp[kc_hosp['Admission_Date'].notnull()]
+	kc_hosp['Moving_Average_7_Day'] = kc_hosp['Hospitalizations'].rolling(7).mean()
 
 	kc_test = pd.read_excel(kc_xlsx_file, sheet_name='Tests')
 	kc_test = kc_test[kc_test['Result_Date'].notnull()]
+	kc_test['Moving_Average_7_Day'] = kc_test['Tests'].rolling(7).mean()
 
 	fig = make_subplots(
 		rows=3, cols=1,
@@ -44,7 +46,6 @@ def run():
 		),
 		row=1, col=1
 	)
-
 	fig.add_trace(
 		go.Scatter(
 			x=kc['date'],
@@ -62,12 +63,28 @@ def run():
 		),
 		row=2, col=1
 	)
+	fig.add_trace(
+		go.Scatter(
+			x=kc_hosp['Admission_Date'],
+			y=kc_hosp['Moving_Average_7_Day'],
+			name='7-day moving average'
+		),
+		row=2, col=1
+	)
 
 	fig.add_trace(
 		go.Bar(
 			x=kc_test['Result_Date'],
 			y=kc_test['Tests'],
 			name='Tests'
+		),
+		row=3, col=1
+	)
+	fig.add_trace(
+		go.Scatter(
+			x=kc_test['Result_Date'],
+			y=kc_test['Moving_Average_7_Day'],
+			name='7-day moving average'
 		),
 		row=3, col=1
 	)
