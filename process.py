@@ -32,7 +32,8 @@ def run():
 	kc_test['Moving_Average_7_Day'] = kc_test['Tests'].rolling(7).mean()
 
 	joined = kc.join(kc_test.set_index('Result_Date'), on='date')
-	joined['tests_per_case'] = joined['Moving_Average_7_Day'] / joined['new_cases_moving_average_7_day']
+	joined['tests_per_case'] = joined['Tests'] / joined['new_cases']
+	joined['tests_per_case_moving_average_7_day'] = joined['tests_per_case'].rolling(7).mean()
 
 	fig = make_subplots(
 		rows=4, cols=1,
@@ -87,16 +88,23 @@ def run():
 	)
 
 	fig.add_trace(
-		go.Scatter(
+		go.Bar(
 			x=joined['date'],
 			y=joined['tests_per_case']
+		),
+		row=4, col=1
+	)
+	fig.add_trace(
+		go.Scatter(
+			x=joined['date'],
+			y=joined['tests_per_case_moving_average_7_day']
 		),
 		row=4, col=1
 	)
 
 	fig.update_layout(
 		title_text='New cases in King County',
-		showlegend=False
+		showlegend=True
 	)
 
 	fig.write_html('output/output.html')
