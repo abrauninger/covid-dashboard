@@ -1,10 +1,14 @@
 import pandas as pd
+import plotly
 import plotly.graph_objs as go
 
 from plotly.subplots import make_subplots
 
 
 kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-june-30.xlsx'
+
+cols = plotly.colors.DEFAULT_PLOTLY_COLORS
+black = 'rgb(0, 0, 0)'
 
 
 def run():
@@ -45,14 +49,16 @@ def run():
 	fig.add_trace(
 		go.Bar(
 			x=kc['date'],
-			y=kc['new_cases']
+			y=kc['new_cases'],
+			marker=dict(color=cols[0])
 		),
 		row=1, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
 			x=kc['date'],
-			y=kc['new_cases_moving_average_7_day']
+			y=kc['new_cases_moving_average_7_day'],
+			line=dict(width=2, color=black)
 		),
 		row=1, col=1
 	)
@@ -60,14 +66,16 @@ def run():
 	fig.add_trace(
 		go.Bar(
 			x=kc_hosp['Admission_Date'],
-			y=kc_hosp['Hospitalizations']
+			y=kc_hosp['Hospitalizations'],
+			marker=dict(color=cols[1])
 		),
 		row=2, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
 			x=kc_hosp['Admission_Date'],
-			y=kc_hosp['Moving_Average_7_Day']
+			y=kc_hosp['Moving_Average_7_Day'],
+			line=dict(width=2, color=black)
 		),
 		row=2, col=1
 	)
@@ -75,14 +83,16 @@ def run():
 	fig.add_trace(
 		go.Bar(
 			x=kc_test['Result_Date'],
-			y=kc_test['Tests']
+			y=kc_test['Tests'],
+			marker=dict(color=cols[2])
 		),
 		row=3, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
 			x=kc_test['Result_Date'],
-			y=kc_test['Moving_Average_7_Day']
+			y=kc_test['Moving_Average_7_Day'],
+			line=dict(width=2, color=black)
 		),
 		row=3, col=1
 	)
@@ -90,14 +100,16 @@ def run():
 	fig.add_trace(
 		go.Bar(
 			x=joined['date'],
-			y=joined['tests_per_case']
+			y=joined['tests_per_case'],
+			marker=dict(color=cols[3])
 		),
 		row=4, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
 			x=joined['date'],
-			y=joined['tests_per_case_moving_average_7_day']
+			y=joined['tests_per_case_moving_average_7_day'],
+			line=dict(width=2, color=black)
 		),
 		row=4, col=1
 	)
