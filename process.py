@@ -10,6 +10,8 @@ kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-june-30.xlsx'
 cols = plotly.colors.DEFAULT_PLOTLY_COLORS
 black = 'rgb(0, 0, 0)'
 
+axis_tickmark_font_size = 22
+subplot_title_font_size = 30
 
 def run():
 	df = pd.read_csv('covid-19-data/us-counties.csv')
@@ -42,7 +44,7 @@ def run():
 	fig = make_subplots(
 		rows=4, cols=1,
 		shared_xaxes=True,
-		vertical_spacing=0.1,
+		vertical_spacing=0.10,
 		subplot_titles=('New cases', 'Hospitalizations', 'Tests', 'Tests per confirmed case')
 	)
 
@@ -116,8 +118,25 @@ def run():
 
 	fig.update_layout(
 		title_text='COVID-19 metrics in King County, WA',
-		showlegend=False
+		showlegend=False,
+		titlefont=dict(size=40)
 	)
+
+	# By default, only the bottom subplot in the stack has X-axis labels (dates).
+	# Show dates on each subplot's X-axis.
+	fig.update_layout(
+		xaxis_showticklabels=True,
+		xaxis2_showticklabels=True,
+		xaxis3_showticklabels=True,
+		xaxis4_showticklabels=True,
+		xaxis_tickfont=dict(size=axis_tickmark_font_size),
+		xaxis2_tickfont=dict(size=axis_tickmark_font_size),
+		xaxis3_tickfont=dict(size=axis_tickmark_font_size),
+		xaxis4_tickfont=dict(size=axis_tickmark_font_size),
+	)
+
+	for annotation in fig['layout']['annotations']:
+		annotation['font']['size'] = subplot_title_font_size
 
 	config = {'staticPlot': True}
 
