@@ -15,6 +15,12 @@ def run():
 	kc['date'] = pd.to_datetime(kc['date'])
 
 	fig = px.bar(kc, x='date', y='new_cases')
+
+	fig.update_layout(
+		title='New cases in King County',
+		xaxis_title='Date',
+		yaxis_title='New Cases')
+
 	fig.write_html('output/output.html')
 
 	return kc
