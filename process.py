@@ -5,7 +5,7 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
 
-kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-june-30.xlsx'
+kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-2020-07-06.xlsx'
 
 cols = plotly.colors.DEFAULT_PLOTLY_COLORS
 black = 'rgb(0, 0, 0)'
