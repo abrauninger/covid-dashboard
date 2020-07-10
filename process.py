@@ -38,14 +38,14 @@ def run():
 	kc_test['Moving_Average_7_Day'] = kc_test['Tests'].rolling(7).mean()
 
 	joined = kc.join(kc_test.set_index('Result_Date'), on='date')
-	joined['tests_per_case'] = joined['Tests'] / joined['new_cases']
-	joined['tests_per_case_moving_average_7_day'] = joined['tests_per_case'].rolling(7).mean()
+	joined['positive_test_rate'] = joined['new_cases'] / joined['Tests']
+	joined['positive_test_rate_moving_average_7_day'] = joined['positive_test_rate'].rolling(7).mean()
 
 	fig = make_subplots(
 		rows=4, cols=1,
 		shared_xaxes=True,
 		vertical_spacing=0.10,
-		subplot_titles=('New cases', 'Hospitalizations', 'Tests', 'Tests per confirmed case')
+		subplot_titles=('New cases', 'Hospitalizations', 'Tests', 'Positive test rate')
 	)
 
 	fig.add_trace(
@@ -102,7 +102,7 @@ def run():
 	fig.add_trace(
 		go.Bar(
 			x=joined['date'],
-			y=joined['tests_per_case'],
+			y=joined['positive_test_rate'],
 			marker=dict(color=cols[3])
 		),
 		row=4, col=1
@@ -110,11 +110,12 @@ def run():
 	fig.add_trace(
 		go.Scatter(
 			x=joined['date'],
-			y=joined['tests_per_case_moving_average_7_day'],
+			y=joined['positive_test_rate_moving_average_7_day'],
 			line=dict(width=2, color=black)
 		),
 		row=4, col=1
 	)
+	fig.update_yaxes(range=[0, 0.3], row=4, col=1)
 
 	fig.update_layout(
 		title_text='COVID-19 metrics in King County, WA',
