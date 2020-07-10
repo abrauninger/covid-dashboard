@@ -42,10 +42,10 @@ def run():
 	joined['positive_test_rate_moving_average_7_day'] = joined['positive_test_rate'].rolling(7).mean()
 
 	fig = make_subplots(
-		rows=4, cols=1,
+		rows=5, cols=1,
 		shared_xaxes=True,
 		vertical_spacing=0.10,
-		subplot_titles=('New cases', 'Hospitalizations', 'Tests', 'Positive test rate')
+		subplot_titles=('New cases', 'Hospitalizations', 'Deaths', 'Tests', 'Positive test rate')
 	)
 
 	fig.add_trace(
@@ -84,16 +84,16 @@ def run():
 
 	fig.add_trace(
 		go.Bar(
-			x=kc_test['Result_Date'],
-			y=kc_test['Tests'],
+			x=kc['date'],
+			y=kc['new_deaths'],
 			marker=dict(color=cols[2])
 		),
 		row=3, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
-			x=kc_test['Result_Date'],
-			y=kc_test['Moving_Average_7_Day'],
+			x=kc['date'],
+			y=kc['new_deaths_moving_average_7_day'],
 			line=dict(width=2, color=black)
 		),
 		row=3, col=1
@@ -101,11 +101,28 @@ def run():
 
 	fig.add_trace(
 		go.Bar(
-			x=joined['date'],
-			y=joined['positive_test_rate'],
+			x=kc_test['Result_Date'],
+			y=kc_test['Tests'],
 			marker=dict(color=cols[3])
 		),
 		row=4, col=1
+	)
+	fig.add_trace(
+		go.Scatter(
+			x=kc_test['Result_Date'],
+			y=kc_test['Moving_Average_7_Day'],
+			line=dict(width=2, color=black)
+		),
+		row=4, col=1
+	)
+
+	fig.add_trace(
+		go.Bar(
+			x=joined['date'],
+			y=joined['positive_test_rate'],
+			marker=dict(color=cols[4])
+		),
+		row=5, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
@@ -113,9 +130,9 @@ def run():
 			y=joined['positive_test_rate_moving_average_7_day'],
 			line=dict(width=2, color=black)
 		),
-		row=4, col=1
+		row=5, col=1
 	)
-	fig.update_yaxes(range=[0, 0.3], row=4, col=1)
+	fig.update_yaxes(range=[0, 0.3], row=5, col=1)
 
 	fig.update_layout(
 		title_text='COVID-19 metrics in King County, WA',
@@ -130,10 +147,12 @@ def run():
 		xaxis2_showticklabels=True,
 		xaxis3_showticklabels=True,
 		xaxis4_showticklabels=True,
+		xaxis5_showticklabels=True,
 		xaxis_tickfont=dict(size=axis_tickmark_font_size),
 		xaxis2_tickfont=dict(size=axis_tickmark_font_size),
 		xaxis3_tickfont=dict(size=axis_tickmark_font_size),
 		xaxis4_tickfont=dict(size=axis_tickmark_font_size),
+		xaxis5_tickfont=dict(size=axis_tickmark_font_size),
 	)
 
 	for annotation in fig['layout']['annotations']:
