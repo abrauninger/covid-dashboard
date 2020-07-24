@@ -181,6 +181,7 @@ def plot_with_plotly(data: Data):
 def plot_with_matplotlib(data):
 	fig, ax = plt.subplots()
 	ax.bar(data.cases_and_deaths['date'], data.cases_and_deaths['new_cases'])
+	ax.plot(data.cases_and_deaths['date'], data.cases_and_deaths['new_cases_moving_average_7_day'])
 	fig.savefig('output/new-cases.svg')
 
 	# Write wrapper HTML
