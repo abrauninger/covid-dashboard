@@ -1,5 +1,4 @@
 import mako.template
-import matplotlib.pyplot as plt
 import pandas as pd
 import plotly
 import plotly.graph_objs as go
@@ -175,20 +174,13 @@ def plot_with_plotly(data: Data):
 
 	config = {'staticPlot': True}
 
-	fig.write_html('output/output.html', config)
-
-
-def plot_with_matplotlib(data):
-	fig, ax = plt.subplots()
-	ax.bar(data.cases_and_deaths['date'], data.cases_and_deaths['new_cases'])
-	ax.plot(data.cases_and_deaths['date'], data.cases_and_deaths['new_cases_moving_average_7_day'])
-	fig.savefig('output/new-cases.svg')
+	fig.write_html('output/figures.html', config)
 
 	# Write wrapper HTML
 	# TODO: Do we really need a templating engine?  If the HTML stays completely static, just copy the "template" file to output.
 	output_template = mako.template.Template(filename='output-template.html', output_encoding='utf-8')
 
-	output_file = open('output/output-matplotlib.html', 'wb')
+	output_file = open('output/output.html', 'wb')
 	output_file.write(output_template.render())
 
 
