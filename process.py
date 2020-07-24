@@ -3,17 +3,17 @@ import plotly
 import plotly.graph_objs as go
 
 from plotly.subplots import make_subplots
+from typing import NamedTuple
 
 
-kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-2020-07-22.xlsx'
+class Data(NamedTuple):
+	cases_and_deaths: pd.DataFrame
+	hospitalizations: pd.DataFrame
+	tests: pd.DataFrame
+	positive_test_rate: pd.DataFrame
 
-cols = plotly.colors.DEFAULT_PLOTLY_COLORS
-black = 'rgb(0, 0, 0)'
 
-axis_tickmark_font_size = 22
-subplot_title_font_size = 30
-
-def run():
+def read_data():
 	df = pd.read_csv('covid-19-data/us-counties.csv')
 
 	kc = df[(df['state'] == 'Washington') & (df['county'] == 'King')]
@@ -29,6 +29,8 @@ def run():
 	kc['new_cases_moving_average_7_day'] = kc['new_cases'].rolling(7).mean()
 	kc['new_deaths_moving_average_7_day'] = kc['new_deaths'].rolling(7).mean()
 
+	kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-2020-07-22.xlsx'
+
 	kc_hosp = pd.read_excel(kc_xlsx_file, sheet_name='Hospitalizations')
 	kc_hosp = kc_hosp[kc_hosp['Admission_Date'].notnull()]
 	kc_hosp['Moving_Average_7_Day'] = kc_hosp['Hospitalizations'].rolling(7).mean()
@@ -41,6 +43,17 @@ def run():
 	joined['positive_test_rate'] = joined['new_cases'] / joined['Tests']
 	joined['positive_test_rate_moving_average_7_day'] = joined['positive_test_rate'].rolling(7).mean()
 
+	# TODO: Return just one DataFrame
+	return Data(cases_and_deaths=kc, hospitalizations=kc_hosp, tests=kc_test, positive_test_rate=joined)
+
+
+def plot_with_plotly(data: Data):
+	cols = plotly.colors.DEFAULT_PLOTLY_COLORS
+	black = 'rgb(0, 0, 0)'
+
+	axis_tickmark_font_size = 22
+	subplot_title_font_size = 30
+
 	fig = make_subplots(
 		rows=5, cols=1,
 		shared_xaxes=True,
@@ -50,16 +63,16 @@ def run():
 
 	fig.add_trace(
 		go.Bar(
-			x=kc['date'],
-			y=kc['new_cases'],
+			x=data.cases_and_deaths['date'],
+			y=data.cases_and_deaths['new_cases'],
 			marker=dict(color=cols[0])
 		),
 		row=1, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
-			x=kc['date'],
-			y=kc['new_cases_moving_average_7_day'],
+			x=data.cases_and_deaths['date'],
+			y=data.cases_and_deaths['new_cases_moving_average_7_day'],
 			line=dict(width=2, color=black)
 		),
 		row=1, col=1
@@ -67,16 +80,16 @@ def run():
 
 	fig.add_trace(
 		go.Bar(
-			x=kc_hosp['Admission_Date'],
-			y=kc_hosp['Hospitalizations'],
+			x=data.hospitalizations['Admission_Date'],
+			y=data.hospitalizations['Hospitalizations'],
 			marker=dict(color=cols[1])
 		),
 		row=2, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
-			x=kc_hosp['Admission_Date'],
-			y=kc_hosp['Moving_Average_7_Day'],
+			x=data.hospitalizations['Admission_Date'],
+			y=data.hospitalizations['Moving_Average_7_Day'],
 			line=dict(width=2, color=black)
 		),
 		row=2, col=1
@@ -84,16 +97,16 @@ def run():
 
 	fig.add_trace(
 		go.Bar(
-			x=kc['date'],
-			y=kc['new_deaths'],
+			x=data.cases_and_deaths['date'],
+			y=data.cases_and_deaths['new_deaths'],
 			marker=dict(color=cols[2])
 		),
 		row=3, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
-			x=kc['date'],
-			y=kc['new_deaths_moving_average_7_day'],
+			x=data.cases_and_deaths['date'],
+			y=data.cases_and_deaths['new_deaths_moving_average_7_day'],
 			line=dict(width=2, color=black)
 		),
 		row=3, col=1
@@ -101,16 +114,16 @@ def run():
 
 	fig.add_trace(
 		go.Bar(
-			x=kc_test['Result_Date'],
-			y=kc_test['Tests'],
+			x=data.tests['Result_Date'],
+			y=data.tests['Tests'],
 			marker=dict(color=cols[3])
 		),
 		row=4, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
-			x=kc_test['Result_Date'],
-			y=kc_test['Moving_Average_7_Day'],
+			x=data.tests['Result_Date'],
+			y=data.tests['Moving_Average_7_Day'],
 			line=dict(width=2, color=black)
 		),
 		row=4, col=1
@@ -118,16 +131,16 @@ def run():
 
 	fig.add_trace(
 		go.Bar(
-			x=joined['date'],
-			y=joined['positive_test_rate'],
+			x=data.positive_test_rate['date'],
+			y=data.positive_test_rate['positive_test_rate'],
 			marker=dict(color=cols[4])
 		),
 		row=5, col=1
 	)
 	fig.add_trace(
 		go.Scatter(
-			x=joined['date'],
-			y=joined['positive_test_rate_moving_average_7_day'],
+			x=data.positive_test_rate['date'],
+			y=data.positive_test_rate['positive_test_rate_moving_average_7_day'],
 			line=dict(width=2, color=black)
 		),
 		row=5, col=1
@@ -161,3 +174,8 @@ def run():
 	config = {'staticPlot': True}
 
 	fig.write_html('output/output.html', config)
+
+
+def run():
+	data = read_data()
+	plot_with_plotly(data)
