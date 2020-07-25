@@ -174,14 +174,16 @@ def plot_with_plotly(data: Data):
 
 	config = {'staticPlot': True}
 
-	fig.write_html('output/figures.html', config)
+	# fig.write_html('output/figures.html', config)
 
 	# Write wrapper HTML
 	# TODO: Do we really need a templating engine?  If the HTML stays completely static, just copy the "template" file to output.
 	output_template = mako.template.Template(filename='output-template.html', output_encoding='utf-8')
 
+	template_data = {'subplot_1': fig.to_html(full_html=False, include_plotlyjs='cdn'), 'subplot_2': fig.to_html(full_html=False, include_plotlyjs='cdn')}
+
 	output_file = open('output/output.html', 'wb')
-	output_file.write(output_template.render())
+	output_file.write(output_template.render(**template_data))
 
 
 def run():
