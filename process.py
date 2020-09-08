@@ -68,8 +68,16 @@ def min_max_dates(date_serieses):
 
 
 def plot_html(fig, date_range):
-	fig.update_xaxes(range=date_range)
-	fig.update_layout(xaxis_tickformat='%-m/%-d/%Y')
+	fig.update_xaxes(
+		range=date_range,
+		showgrid=True
+	)
+
+	fig.update_layout(
+		xaxis_showticklabels=True,
+		xaxis_tickformat='%-m/%-d/%Y'
+	)
+
 	config = {'staticPlot': True}
 	return fig.to_html(full_html=False, config=config, include_plotlyjs='cdn')
 
