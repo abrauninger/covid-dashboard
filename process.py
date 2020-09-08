@@ -140,6 +140,7 @@ def plot_with_plotly(data: Data):
 		)
 	)
 	positive_test_rate_fig.update_yaxes(range=[0, 0.3])
+	positive_test_rate_fig.update_layout(yaxis_tickformat='%')
 
 	# fig.update_layout(
 	# 	title_text='COVID-19 metrics in King County, WA',
