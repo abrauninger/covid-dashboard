@@ -1,3 +1,4 @@
+import datetime
 import mako.template
 import pandas as pd
 import plotly
@@ -48,7 +49,26 @@ def read_data():
 	return Data(cases_and_deaths=kc, hospitalizations=kc_hosp, tests=kc_test, positive_test_rate=joined)
 
 
-def plot_html(fig):
+def min_max_dates(date_serieses):
+	# Hospitalizations started in King County prior to 3/1/2020, but all other data series are relevant after 3/1/2020.
+	# Hard-code start date to 3/1/2020
+	min_date = datetime.date(2020, 3, 1)
+	max_date = None
+
+	for date_series in date_serieses:
+		series_min_date = date_series.min()
+		series_max_date = date_series.max()
+
+		# if min_date is None or series_min_date < min_date:
+		# 	min_date = series_min_date
+		if max_date is None or series_max_date > max_date:
+			max_date = series_max_date
+
+	return [min_date, max_date]
+
+
+def plot_html(fig, date_range):
+	fig.update_xaxes(range=date_range)
 	fig.update_layout(xaxis_tickformat='%-m/%-d/%Y')
 	config = {'staticPlot': True}
 	return fig.to_html(full_html=False, config=config, include_plotlyjs='cdn')
@@ -60,6 +80,8 @@ def plot_with_plotly(data: Data):
 
 	axis_tickmark_font_size = 22
 	subplot_title_font_size = 30
+
+	date_range = min_max_dates([data.cases_and_deaths['date'], data.hospitalizations['Admission_Date'], data.tests['Result_Date'], data.positive_test_rate['date']])
 
 	new_cases_fig = go.Figure()
 	new_cases_fig.add_trace(
@@ -174,11 +196,11 @@ def plot_with_plotly(data: Data):
 	output_template = mako.template.Template(filename='output-template.html', output_encoding='utf-8')
 
 	template_data = {
-		'new_cases_plot': plot_html(new_cases_fig),
-		'hospitalizations_plot': plot_html(hospitalizations_fig),
-		'deaths_plot': plot_html(deaths_fig),
-		'tests_plot': plot_html(tests_fig),
-		'positive_test_rate_plot': plot_html(positive_test_rate_fig),
+		'new_cases_plot': plot_html(new_cases_fig, date_range),
+		'hospitalizations_plot': plot_html(hospitalizations_fig, date_range),
+		'deaths_plot': plot_html(deaths_fig, date_range),
+		'tests_plot': plot_html(tests_fig, date_range),
+		'positive_test_rate_plot': plot_html(positive_test_rate_fig, date_range),
 	}
 
 	output_file = open('output/output.html', 'wb')
