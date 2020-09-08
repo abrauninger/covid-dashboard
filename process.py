@@ -48,6 +48,11 @@ def read_data():
 	return Data(cases_and_deaths=kc, hospitalizations=kc_hosp, tests=kc_test, positive_test_rate=joined)
 
 
+def plot_html(fig):
+	config = {'staticPlot': True}
+	return fig.to_html(full_html=False, config=config, include_plotlyjs='cdn')
+
+
 def plot_with_plotly(data: Data):
 	cols = plotly.colors.DEFAULT_PLOTLY_COLORS
 	black = 'rgb(0, 0, 0)'
@@ -160,8 +165,6 @@ def plot_with_plotly(data: Data):
 	# for annotation in fig['layout']['annotations']:
 	# 	annotation['font']['size'] = subplot_title_font_size
 
-	config = {'staticPlot': True}
-
 	# fig.write_html('output/figures.html', config)
 
 	# Write wrapper HTML
@@ -169,11 +172,11 @@ def plot_with_plotly(data: Data):
 	output_template = mako.template.Template(filename='output-template.html', output_encoding='utf-8')
 
 	template_data = {
-		'new_cases_plot': new_cases_fig.to_html(full_html=False, config=config, include_plotlyjs='cdn'),
-		'hospitalizations_plot': hospitalizations_fig.to_html(full_html=False, config=config, include_plotlyjs='cdn'),
-		'deaths_plot': deaths_fig.to_html(full_html=False, config=config, include_plotlyjs='cdn'),
-		'tests_plot': tests_fig.to_html(full_html=False, config=config, include_plotlyjs='cdn'),
-		'positive_test_rate_plot': positive_test_rate_fig.to_html(full_html=False, config=config, include_plotlyjs='cdn'),
+		'new_cases_plot': plot_html(new_cases_fig),
+		'hospitalizations_plot': plot_html(hospitalizations_fig),
+		'deaths_plot': plot_html(deaths_fig),
+		'tests_plot': plot_html(tests_fig),
+		'positive_test_rate_plot': plot_html(positive_test_rate_fig),
 	}
 
 	output_file = open('output/output.html', 'wb')
