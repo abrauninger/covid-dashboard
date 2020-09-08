@@ -193,34 +193,7 @@ def plot_with_plotly(data: Data, nytimes_pull_date: datetime.date, king_county_p
 	positive_test_rate_fig.update_yaxes(range=[0, 0.3])
 	positive_test_rate_fig.update_layout(yaxis_tickformat='%')
 
-	# fig.update_layout(
-	# 	title_text='COVID-19 metrics in King County, WA',
-	# 	showlegend=False,
-	# 	titlefont=dict(size=40)
-	# )
-
-	# By default, only the bottom subplot in the stack has X-axis labels (dates).
-	# Show dates on each subplot's X-axis.
-	# fig.update_layout(
-	# 	xaxis_showticklabels=True,
-	# 	xaxis2_showticklabels=True,
-	# 	xaxis3_showticklabels=True,
-	# 	xaxis4_showticklabels=True,
-	# 	xaxis5_showticklabels=True,
-	# 	xaxis_tickfont=dict(size=axis_tickmark_font_size),
-	# 	xaxis2_tickfont=dict(size=axis_tickmark_font_size),
-	# 	xaxis3_tickfont=dict(size=axis_tickmark_font_size),
-	# 	xaxis4_tickfont=dict(size=axis_tickmark_font_size),
-	# 	xaxis5_tickfont=dict(size=axis_tickmark_font_size),
-	# )
-
-	# for annotation in fig['layout']['annotations']:
-	# 	annotation['font']['size'] = subplot_title_font_size
-
-	# fig.write_html('output/figures.html', config)
-
 	# Write wrapper HTML
-	# TODO: Do we really need a templating engine?  If the HTML stays completely static, just copy the "template" file to output.
 	output_template = mako.template.Template(filename='output-template.html', output_encoding='utf-8')
 
 	template_data = {
