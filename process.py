@@ -100,6 +100,7 @@ def plot_with_plotly(data: Data):
 	new_cases_fig = go.Figure()
 	new_cases_fig.add_trace(
 		go.Bar(
+			name='Daily count',
 			x=data.cases_and_deaths['date'],
 			y=data.cases_and_deaths['new_cases'],
 			marker=dict(color=cols[0])
@@ -107,6 +108,7 @@ def plot_with_plotly(data: Data):
 	)
 	new_cases_fig.add_trace(
 		go.Scatter(
+			name='7-day average',
 			x=data.cases_and_deaths['date'],
 			y=data.cases_and_deaths['new_cases_moving_average_7_day'],
 			line=dict(width=2, color=black)
@@ -116,6 +118,7 @@ def plot_with_plotly(data: Data):
 	hospitalizations_fig = go.Figure()
 	hospitalizations_fig.add_trace(
 		go.Bar(
+			name='Daily count',
 			x=data.hospitalizations['Admission_Date'],
 			y=data.hospitalizations['Hospitalizations'],
 			marker=dict(color=cols[1])
@@ -123,6 +126,7 @@ def plot_with_plotly(data: Data):
 	)
 	hospitalizations_fig.add_trace(
 		go.Scatter(
+			name='7-day average',
 			x=data.hospitalizations['Admission_Date'],
 			y=data.hospitalizations['Moving_Average_7_Day'],
 			line=dict(width=2, color=black)
@@ -132,6 +136,7 @@ def plot_with_plotly(data: Data):
 	deaths_fig = go.Figure()
 	deaths_fig.add_trace(
 		go.Bar(
+			name='Daily count',
 			x=data.cases_and_deaths['date'],
 			y=data.cases_and_deaths['new_deaths'],
 			marker=dict(color=cols[2])
@@ -139,6 +144,7 @@ def plot_with_plotly(data: Data):
 	)
 	deaths_fig.add_trace(
 		go.Scatter(
+			name='7-day average',
 			x=data.cases_and_deaths['date'],
 			y=data.cases_and_deaths['new_deaths_moving_average_7_day'],
 			line=dict(width=2, color=black)
@@ -148,6 +154,7 @@ def plot_with_plotly(data: Data):
 	tests_fig = go.Figure()
 	tests_fig.add_trace(
 		go.Bar(
+			name='Daily count',
 			x=data.tests['Result_Date'],
 			y=data.tests['Tests'],
 			marker=dict(color=cols[3])
@@ -155,6 +162,7 @@ def plot_with_plotly(data: Data):
 	)
 	tests_fig.add_trace(
 		go.Scatter(
+			name='7-day average',
 			x=data.tests['Result_Date'],
 			y=data.tests['Moving_Average_7_Day'],
 			line=dict(width=2, color=black)
@@ -164,6 +172,7 @@ def plot_with_plotly(data: Data):
 	positive_test_rate_fig = go.Figure()
 	positive_test_rate_fig.add_trace(
 		go.Bar(
+			name='Daily count',
 			x=data.positive_test_rate['date'],
 			y=data.positive_test_rate['positive_test_rate'],
 			marker=dict(color=cols[4])
@@ -171,6 +180,7 @@ def plot_with_plotly(data: Data):
 	)
 	positive_test_rate_fig.add_trace(
 		go.Scatter(
+			name='7-day average',
 			x=data.positive_test_rate['date'],
 			y=data.positive_test_rate['positive_test_rate_moving_average_7_day'],
 			line=dict(width=2, color=black)
