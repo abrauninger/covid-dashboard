@@ -15,25 +15,29 @@
 	}
 
 	table {
-		margin-top: 24px;
-		margin-bottom: 24px;
+		border-top: 1px solid #ccc;
+		border-bottom: 1px solid #ccc;
 		border-collapse: collapse;
 	}
 
-	tr.header-row {
+	table.data-sources-desktop {
+		display: none;
+	}
+
+	table.data-sources-mobile {
+		margin-bottom: 48px;
+	}
+
+	tr.border-bottom {
 		border-bottom: 1px solid #ccc;
 	}
 
-	tr.not-bottom-row {
-		border-bottom: 1px solid #ccc;
-	}
-
-	th {
+	table.data-sources-desktop th {
 		text-align: left;
 		padding-right: 20px;
 	}
 
-	th.not-first-column {
+	table.data-sources-desktop th.not-first-column {
 		padding-left: 20px;
 	}
 
@@ -46,8 +50,22 @@
 		padding-right: 20px;
 	}
 
+	table.data-sources-mobile td {
+		border: none;
+		font-size: 90%;
+	}
+
 	ul {
 		padding-left: 20px;
+	}
+
+	table.data-sources-mobile td.not-first-column {
+		border: none;
+	}
+
+	table.data-sources-mobile ul {
+		margin-top: 0;
+		margin-bottom: 0;
 	}
 
 	.body-container {
@@ -91,72 +109,22 @@
 	}
 
 	@media only screen and (min-width: 800px) {
+		table.data-sources-desktop {
+			display: inherit;
+			margin-top: 24px;
+			margin-bottom: 24px;
+		}
+
+		table.data-sources-mobile {
+			display: none;
+		}
+
 		.plot-container {
 			height: 300px;
 		}
 
 		.source-attribution {
 			margin-bottom: 40px;
-		}
-	}
-
-	@media only screen and (max-width: 800px) {
-		/* On mobile screens, make sure the "data sources" table doesn't blow up the layout of the whole page. */
-		/* See https://css-tricks.com/responsive-data-tables/ */
-
-		/* Force table to not be like tables anymore */
-		table, thead, tbody, th, td, tr { 
-			display: block;
-		}
-
-		table {
-			border-top: 1px solid #ccc;
-			border-bottom: 1px solid #ccc;
-			margin-bottom: 48px;
-		}
-		
-		/* Hide table headers (but not display: none;, for accessibility) */
-		thead tr { 
-			position: absolute;
-			top: -9999px;
-			left: -9999px;
-		}
-
-		td { 
-			/* Behave  like a "row" */
-			border: none;
-			position: relative;
-			padding-left: 40%; 
-			font-size: 90%;
-		}
-
-		td.not-first-column {
-			padding-left: inherit;
-			padding-right: inherit;
-			border: none;
-			position: relative;
-			padding-left: 40%; 
-		}
-
-		td:before { 
-			position: absolute;
-			left: 6px;
-			width: 35%; 
-			padding-right: 10px; 
-			white-space: nowrap;
-			vertical-align: top;
-			font-weight: bold;
-		}
-
-		/* Label the data */
-		td:nth-of-type(1):before { content: "Source"; }
-		td:nth-of-type(2):before { content: "Used for"; }
-		td:nth-of-type(3):before { content: "Availability"; }
-		td:nth-of-type(4):before { content: "Last pulled"; }
-
-		ul {
-			margin-top: 0;
-			margin-bottom: 0;
 		}
 	}
 </style>
@@ -173,13 +141,27 @@
 
 <h2>Data sources</h2>
 
-<table>
+<table class="data-sources-desktop">
 	<thead>
-		<tr class="header-row"><th>Source</th><th class="not-first-column">Used for</th><th class="not-first-column">Availability</th><th class="not-first-column">Last pulled</th></tr>
+		<tr class="border-bottom"><th>Source</th><th class="not-first-column">Used for</th><th class="not-first-column">Availability</th><th class="not-first-column">Last pulled</th></tr>
 	</thead>
 	<tbody>
-		<tr class="not-bottom-row"><td><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td><td class="not-first-column"><ul><li>New cases</li><li>Deaths</li></ul></td><td class="not-first-column">Daily</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
+		<tr class="border-bottom"><td><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td><td class="not-first-column"><ul><li>New cases</li><li>Deaths</li></ul></td><td class="not-first-column">Daily</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
 		<tr><td><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td><td class="not-first-column"><ul><li>Hospitalizations</li><li>Tests</li></ul></td><td class="not-first-column">Every Tuesday</td><td class="not-first-column"><strong>${king_county_pull_date}</strong></td></tr>
+	</tbody>
+</table>
+
+<table class="data-sources-mobile">
+	<tbody>
+		<tr><td class="source-label">Source:</td><td class="not-first-column"><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td></tr>
+		<tr><td class="source-label">Used for:</td><td class="not-first-column"><ul><li>New cases</li><li>Deaths</li></ul></td></tr>
+		<tr><td class="source-label">Availability:</td><td class="not-first-column">Daily</td></tr>
+		<tr class="border-bottom"><td class="source-label">Last pulled:</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
+
+		<tr><td class="source-label">Source:</td><td class="not-first-column"><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td></tr>
+		<tr><td class="source-label">Used for:</td><td class="not-first-column"><ul><li>Hospitalizations</li><li>Tests</li></ul></td></tr>
+		<tr><td class="source-label">Availability:</td><td class="not-first-column">Every Tuesday</td></tr>
+		<tr class="border-bottom"><td class="source-label">Last pulled:</td><td class="not-first-column"><strong>${king_county_pull_date}</strong></td></tr>
 	</tbody>
 </table>
 
