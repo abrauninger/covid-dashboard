@@ -63,7 +63,7 @@
 		font-family: 'Source Sans', sans-serif;
 		font-size: 12px;
 		font-style: italic;
-		margin-bottom: 40px;
+		margin-bottom: 28px;
 	}
 
 	code {
@@ -71,6 +71,10 @@
 		background-color: #eee;
 		padding-left: 6px;
 		padding-right: 6px;
+	}
+
+	.mask-up-header {
+		margin-top: 36px;
 	}
 
 	.mask-up-img {
@@ -90,6 +94,10 @@
 		.plot-container {
 			height: 300px;
 		}
+
+		.source-attribution {
+			margin-bottom: 40px;
+		}
 	}
 
 	@media only screen and (max-width: 800px) {
@@ -98,12 +106,13 @@
 
 		/* Force table to not be like tables anymore */
 		table, thead, tbody, th, td, tr { 
-			display: block; 
+			display: block;
 		}
 
 		table {
 			border-top: 1px solid #ccc;
 			border-bottom: 1px solid #ccc;
+			margin-bottom: 48px;
 		}
 		
 		/* Hide table headers (but not display: none;, for accessibility) */
@@ -117,7 +126,8 @@
 			/* Behave  like a "row" */
 			border: none;
 			position: relative;
-			padding-left: 50%; 
+			padding-left: 40%; 
+			font-size: 90%;
 		}
 
 		td.not-first-column {
@@ -125,23 +135,23 @@
 			padding-right: inherit;
 			border: none;
 			position: relative;
-			padding-left: 50%; 
+			padding-left: 40%; 
 		}
 
 		td:before { 
-			/* Now like a table header */
 			position: absolute;
 			left: 6px;
-			width: 45%; 
+			width: 35%; 
 			padding-right: 10px; 
 			white-space: nowrap;
 			vertical-align: top;
+			font-weight: bold;
 		}
 
 		/* Label the data */
 		td:nth-of-type(1):before { content: "Source"; }
 		td:nth-of-type(2):before { content: "Used for"; }
-		td:nth-of-type(3):before { content: "Update frequency"; }
+		td:nth-of-type(3):before { content: "Availability"; }
 		td:nth-of-type(4):before { content: "Last pulled"; }
 
 		ul {
@@ -165,7 +175,7 @@
 
 <table>
 	<thead>
-		<tr class="header-row"><th>Source</th><th class="not-first-column">Used for</th><th class="not-first-column">Update frequency</th><th class="not-first-column">Last pulled</th></tr>
+		<tr class="header-row"><th>Source</th><th class="not-first-column">Used for</th><th class="not-first-column">Availability</th><th class="not-first-column">Last pulled</th></tr>
 	</thead>
 	<tbody>
 		<tr class="not-bottom-row"><td><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td><td class="not-first-column"><ul><li>New cases</li><li>Deaths</li></ul></td><td class="not-first-column">Daily</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
@@ -212,7 +222,7 @@ ${positive_test_rate_plot}
 
 <p>The code that generated this page is available in the <a href="https://github.com/abrauninger/covid-dashboard"><code>covid-dashboard</code></a> repository on GitHub.</p>
 
-<h2>Wear a mask</h2>
+<h2 class="mask-up-header">Wear a mask</h2>
 
 <p>Stay healthy out there.</p>
 
