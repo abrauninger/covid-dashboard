@@ -55,124 +55,112 @@ def plot_with_plotly(data: Data):
 	axis_tickmark_font_size = 22
 	subplot_title_font_size = 30
 
-	fig = make_subplots(
-		rows=5, cols=1,
-		shared_xaxes=True,
-		vertical_spacing=0.10,
-		subplot_titles=('New cases', 'Hospitalizations', 'Deaths', 'Tests', 'Positive test rate')
-	)
-
-	fig.add_trace(
+	new_cases_fig = go.Figure()
+	new_cases_fig.add_trace(
 		go.Bar(
 			x=data.cases_and_deaths['date'],
 			y=data.cases_and_deaths['new_cases'],
 			marker=dict(color=cols[0])
-		),
-		row=1, col=1
+		)
 	)
-	fig.add_trace(
+	new_cases_fig.add_trace(
 		go.Scatter(
 			x=data.cases_and_deaths['date'],
 			y=data.cases_and_deaths['new_cases_moving_average_7_day'],
 			line=dict(width=2, color=black)
-		),
-		row=1, col=1
+		)
 	)
 
-	fig.add_trace(
+	hospitalizations_fig = go.Figure()
+	hospitalizations_fig.add_trace(
 		go.Bar(
 			x=data.hospitalizations['Admission_Date'],
 			y=data.hospitalizations['Hospitalizations'],
 			marker=dict(color=cols[1])
-		),
-		row=2, col=1
+		)
 	)
-	fig.add_trace(
+	hospitalizations_fig.add_trace(
 		go.Scatter(
 			x=data.hospitalizations['Admission_Date'],
 			y=data.hospitalizations['Moving_Average_7_Day'],
 			line=dict(width=2, color=black)
-		),
-		row=2, col=1
+		)
 	)
 
-	fig.add_trace(
+	deaths_fig = go.Figure()
+	deaths_fig.add_trace(
 		go.Bar(
 			x=data.cases_and_deaths['date'],
 			y=data.cases_and_deaths['new_deaths'],
 			marker=dict(color=cols[2])
-		),
-		row=3, col=1
+		)
 	)
-	fig.add_trace(
+	deaths_fig.add_trace(
 		go.Scatter(
 			x=data.cases_and_deaths['date'],
 			y=data.cases_and_deaths['new_deaths_moving_average_7_day'],
 			line=dict(width=2, color=black)
-		),
-		row=3, col=1
+		)
 	)
 
-	fig.add_trace(
+	tests_fig = go.Figure()
+	tests_fig.add_trace(
 		go.Bar(
 			x=data.tests['Result_Date'],
 			y=data.tests['Tests'],
 			marker=dict(color=cols[3])
-		),
-		row=4, col=1
+		)
 	)
-	fig.add_trace(
+	tests_fig.add_trace(
 		go.Scatter(
 			x=data.tests['Result_Date'],
 			y=data.tests['Moving_Average_7_Day'],
 			line=dict(width=2, color=black)
-		),
-		row=4, col=1
+		)
 	)
 
-	fig.add_trace(
+	positive_test_rate_fig = go.Figure()
+	positive_test_rate_fig.add_trace(
 		go.Bar(
 			x=data.positive_test_rate['date'],
 			y=data.positive_test_rate['positive_test_rate'],
 			marker=dict(color=cols[4])
-		),
-		row=5, col=1
+		)
 	)
-	fig.add_trace(
+	positive_test_rate_fig.add_trace(
 		go.Scatter(
 			x=data.positive_test_rate['date'],
 			y=data.positive_test_rate['positive_test_rate_moving_average_7_day'],
 			line=dict(width=2, color=black)
-		),
-		row=5, col=1
+		)
 	)
-	fig.update_yaxes(range=[0, 0.3], row=5, col=1)
+	positive_test_rate_fig.update_yaxes(range=[0, 0.3])
 
-	fig.update_layout(
-		title_text='COVID-19 metrics in King County, WA',
-		showlegend=False,
-		titlefont=dict(size=40)
-	)
+	# fig.update_layout(
+	# 	title_text='COVID-19 metrics in King County, WA',
+	# 	showlegend=False,
+	# 	titlefont=dict(size=40)
+	# )
 
 	# By default, only the bottom subplot in the stack has X-axis labels (dates).
 	# Show dates on each subplot's X-axis.
-	fig.update_layout(
-		xaxis_showticklabels=True,
-		xaxis2_showticklabels=True,
-		xaxis3_showticklabels=True,
-		xaxis4_showticklabels=True,
-		xaxis5_showticklabels=True,
-		xaxis_tickfont=dict(size=axis_tickmark_font_size),
-		xaxis2_tickfont=dict(size=axis_tickmark_font_size),
-		xaxis3_tickfont=dict(size=axis_tickmark_font_size),
-		xaxis4_tickfont=dict(size=axis_tickmark_font_size),
-		xaxis5_tickfont=dict(size=axis_tickmark_font_size),
-	)
+	# fig.update_layout(
+	# 	xaxis_showticklabels=True,
+	# 	xaxis2_showticklabels=True,
+	# 	xaxis3_showticklabels=True,
+	# 	xaxis4_showticklabels=True,
+	# 	xaxis5_showticklabels=True,
+	# 	xaxis_tickfont=dict(size=axis_tickmark_font_size),
+	# 	xaxis2_tickfont=dict(size=axis_tickmark_font_size),
+	# 	xaxis3_tickfont=dict(size=axis_tickmark_font_size),
+	# 	xaxis4_tickfont=dict(size=axis_tickmark_font_size),
+	# 	xaxis5_tickfont=dict(size=axis_tickmark_font_size),
+	# )
 
-	for annotation in fig['layout']['annotations']:
-		annotation['font']['size'] = subplot_title_font_size
+	# for annotation in fig['layout']['annotations']:
+	# 	annotation['font']['size'] = subplot_title_font_size
 
-	config = {'staticPlot': True}
+	# config = {'staticPlot': True}
 
 	# fig.write_html('output/figures.html', config)
 
@@ -180,7 +168,13 @@ def plot_with_plotly(data: Data):
 	# TODO: Do we really need a templating engine?  If the HTML stays completely static, just copy the "template" file to output.
 	output_template = mako.template.Template(filename='output-template.html', output_encoding='utf-8')
 
-	template_data = {'subplot_1': fig.to_html(full_html=False, include_plotlyjs='cdn'), 'subplot_2': fig.to_html(full_html=False, include_plotlyjs='cdn')}
+	template_data = {
+		'new_cases_plot': new_cases_fig.to_html(full_html=False, include_plotlyjs='cdn'),
+		'hospitalizations_plot': hospitalizations_fig.to_html(full_html=False, include_plotlyjs='cdn'),
+		'deaths_plot': deaths_fig.to_html(full_html=False, include_plotlyjs='cdn'),
+		'tests_plot': tests_fig.to_html(full_html=False, include_plotlyjs='cdn'),
+		'positive_test_rate_plot': positive_test_rate_fig.to_html(full_html=False, include_plotlyjs='cdn'),
+	}
 
 	output_file = open('output/output.html', 'wb')
 	output_file.write(output_template.render(**template_data))
