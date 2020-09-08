@@ -88,7 +88,11 @@ def plot_html(fig, date_range):
 	return fig.to_html(full_html=False, config=config, include_plotlyjs='cdn')
 
 
-def plot_with_plotly(data: Data):
+def format_date(date: datetime.date):
+	return f'{date.month}/{date.day}/{date.year:4d}'
+
+
+def plot_with_plotly(data: Data, nytimes_pull_date: datetime.date, king_county_pull_date: datetime.date):
 	cols = plotly.colors.DEFAULT_PLOTLY_COLORS
 	black = 'rgb(0, 0, 0)'
 
@@ -225,12 +229,15 @@ def plot_with_plotly(data: Data):
 		'deaths_plot': plot_html(deaths_fig, date_range),
 		'tests_plot': plot_html(tests_fig, date_range),
 		'positive_test_rate_plot': plot_html(positive_test_rate_fig, date_range),
+		'nytimes_pull_date': format_date(nytimes_pull_date),
+		'king_county_pull_date': format_date(king_county_pull_date),
+		'page_updated_date': format_date(datetime.date.today()),
 	}
 
 	output_file = open('output/output.html', 'wb')
 	output_file.write(output_template.render(**template_data))
 
 
-def run():
+def run(*, nytimes_pull_date: datetime.date, king_county_pull_date: datetime.date):
 	data = read_data()
-	plot_with_plotly(data)
+	plot_with_plotly(data, nytimes_pull_date, king_county_pull_date)

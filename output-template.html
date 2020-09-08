@@ -3,7 +3,7 @@
 <html>
 
 <head>
-<title>Covid-19 dashboard for King County, WA</title>
+<title>COVID-19 metrics for King County, WA</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro&display=swap" rel="stylesheet">
 
@@ -12,13 +12,62 @@
 		font-family: 'Source Serif Pro', serif;
 	}
 
+	table {
+		margin-top: 24px;
+		margin-bottom: 24px;
+		border-collapse: collapse;
+	}
+
+	tr.header-row {
+		border-bottom: 1px solid #ccc;
+	}
+
+	tr.not-bottom-row {
+		border-bottom: 1px solid #ccc;
+	}
+
+	th {
+		text-align: left;
+		padding-right: 20px;
+	}
+
+	th.not-first-column {
+		padding-left: 20px;
+	}
+
+	td {
+		vertical-align: top;
+	}
+
+	td.not-first-column {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	ul {
+		padding-left: 20px;
+	}
+
 	.body-container {
 		max-width: 1200px;
 	}
 
 	.plot-container {
 		height: 200px;
+	}
+
+	.source-attribution {
+		font-family: 'Source Sans', sans-serif;
+		font-size: 12px;
+		font-style: italic;
 		margin-bottom: 40px;
+	}
+
+	code {
+		font-size: 16px;
+		background-color: #eee;
+		padding-left: 6px;
+		padding-right: 6px;
 	}
 
 	@media only screen and (min-width: 800px) {
@@ -34,37 +83,60 @@
 
 <div class="body-container">
 
+<h1>COVID-19 metrics for King County, WA</h1>
+
+<p>Last updated <strong>${page_updated_date}</strong>.</p>
+
+<h2>Data sources</h2>
+
+<table>
+	<tr class="header-row"><th>Source</th><th class="not-first-column">Used for</th><th class="not-first-column">Update frequency</th><th class="not-first-column">Last pulled</th></tr>
+	<tr class="not-bottom-row"><td><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td><td class="not-first-column"><ul><li>New cases</li><li>Deaths</li></ul></td><td class="not-first-column">Daily</td><td class="not-first-column">${nytimes_pull_date}</td></tr>
+	<tr><td><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td><td class="not-first-column"><ul><li>Hospitalizations</li><li>Tests</li></ul></td><td class="not-first-column">Every Tuesday</td><td class="not-first-column">${king_county_pull_date}</td></tr>
+</table>
+
 <h2>New cases</h2>
 
 <div class="plot-container">
 ${new_cases_plot}
 </div>
+<p class="source-attribution">Source: New York Times</p>
 
 <h2>Hospitalizations</h2>
 
 <div class="plot-container">
 ${hospitalizations_plot}
 </div>
+<p class="source-attribution">Source: King County Department of Health</p>
 
 <h2>Deaths</h2>
 
 <div class="plot-container">
 ${deaths_plot}
 </div>
+<p class="source-attribution">Source: New York Times</p>
 
 <h2>Tests</h2>
 
 <div class="plot-container">
 ${tests_plot}
 </div>
+<p class="source-attribution">Source: King County Department of Health</p>
 
 <h2>Positive test rate</h2>
 
 <div class="plot-container">
 ${positive_test_rate_plot}
 </div>
+<p class="source-attribution">Sources: New York Times, King County Department of Health</p>
 
 </div>
+
+<h2>Source code</h2>
+
+<p>The code that generated this page is available at the <a href="https://github.com/abrauninger/covid-dashboard"><code>covid-dashboard</code></a> repository on GitHub.</p>
+
+<p>Stay healthy and wear a mask!</p>
 
 </body>
 
