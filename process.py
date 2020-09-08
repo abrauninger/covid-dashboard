@@ -81,7 +81,12 @@ def plot_html(fig, date_range):
 			b=0
 		),
 		xaxis_showticklabels=True,
-		xaxis_tickformat='%-m/%-d/%Y'
+		xaxis_tickformat='%-m/%-d/%Y',
+		legend=dict(
+			orientation='h',
+			xanchor='right',
+			x=1
+		)
 	)
 
 	config = {'staticPlot': True, 'responsive': True}

@@ -5,6 +5,8 @@
 <head>
 <title>COVID-19 metrics for King County, WA</title>
 
+<meta name="viewport" content="width=device-width; initial-scale=1.0;" />
+
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro&display=swap" rel="stylesheet">
 
 <style>
@@ -57,6 +59,7 @@
 	}
 
 	.source-attribution {
+		text-align: right;
 		font-family: 'Source Sans', sans-serif;
 		font-size: 12px;
 		font-style: italic;
@@ -71,15 +74,76 @@
 	}
 
 	.mask-up-img {
-		max-width: 600px;
+		max-width: 100%;
 		display: block;
 		margin-left: auto;
 		margin-right: auto;
 	}
 
+	@media only screen and (min-width: 600px) {
+		.mask-up-img  {
+			max-width: 600px;
+		}
+	}
+
 	@media only screen and (min-width: 800px) {
 		.plot-container {
 			height: 300px;
+		}
+	}
+
+	@media only screen and (max-width: 800px) {
+		/* On mobile screens, make sure the "data sources" table doesn't blow up the layout of the whole page. */
+		/* See https://css-tricks.com/responsive-data-tables/ */
+
+		/* Force table to not be like tables anymore */
+		table, thead, tbody, th, td, tr { 
+			display: block; 
+		}
+		
+		/* Hide table headers (but not display: none;, for accessibility) */
+		thead tr { 
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		td { 
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee; 
+			position: relative;
+			padding-left: 50%; 
+		}
+
+		td.not-first-column {
+			padding-left: inherit;
+			padding-right: inherit;
+			border: none;
+			border-bottom: 1px solid #eee; 
+			position: relative;
+			padding-left: 50%; 
+		}
+
+		td:before { 
+			/* Now like a table header */
+			position: absolute;
+			left: 6px;
+			width: 45%; 
+			padding-right: 10px; 
+			white-space: nowrap;
+			vertical-align: top;
+		}
+
+		/* Label the data */
+		td:nth-of-type(1):before { content: "Source"; }
+		td:nth-of-type(2):before { content: "Used for"; }
+		td:nth-of-type(3):before { content: "Update frequency"; }
+		td:nth-of-type(4):before { content: "Last pulled"; }
+
+		ul {
+			margin-top: 0;
+			margin-bottom: 0;
 		}
 	}
 </style>
@@ -97,9 +161,13 @@
 <h2>Data sources</h2>
 
 <table>
-	<tr class="header-row"><th>Source</th><th class="not-first-column">Used for</th><th class="not-first-column">Update frequency</th><th class="not-first-column">Last pulled</th></tr>
-	<tr class="not-bottom-row"><td><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td><td class="not-first-column"><ul><li>New cases</li><li>Deaths</li></ul></td><td class="not-first-column">Daily</td><td class="not-first-column">${nytimes_pull_date}</td></tr>
-	<tr><td><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td><td class="not-first-column"><ul><li>Hospitalizations</li><li>Tests</li></ul></td><td class="not-first-column">Every Tuesday</td><td class="not-first-column">${king_county_pull_date}</td></tr>
+	<thead>
+		<tr class="header-row"><th>Source</th><th class="not-first-column">Used for</th><th class="not-first-column">Update frequency</th><th class="not-first-column">Last pulled</th></tr>
+	</thead>
+	<tbody>
+		<tr class="not-bottom-row"><td><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td><td class="not-first-column"><ul><li>New cases</li><li>Deaths</li></ul></td><td class="not-first-column">Daily</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
+		<tr><td><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td><td class="not-first-column"><ul><li>Hospitalizations</li><li>Tests</li></ul></td><td class="not-first-column">Every Tuesday</td><td class="not-first-column"><strong>${king_county_pull_date}</strong></td></tr>
+	</tbody>
 </table>
 
 <h2>New cases</h2>
@@ -137,17 +205,17 @@ ${positive_test_rate_plot}
 </div>
 <p class="source-attribution">Sources: New York Times, King County Department of Health</p>
 
-</div>
-
 <h2>Source code</h2>
 
-<p>The code that generated this page is available at the <a href="https://github.com/abrauninger/covid-dashboard"><code>covid-dashboard</code></a> repository on GitHub.</p>
+<p>The code that generated this page is available in the <a href="https://github.com/abrauninger/covid-dashboard"><code>covid-dashboard</code></a> repository on GitHub.</p>
 
 <h2>Wear a mask</h2>
 
 <p>Stay healthy out there.</p>
 
 <a href="https://coronavirus.wa.gov/masks"><img class="mask-up-img" src="DOH-COVID19-MaskUp-970x250-ENG.gif" /></a>
+
+</div>
 
 </body>
 
