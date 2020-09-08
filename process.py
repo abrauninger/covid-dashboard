@@ -74,8 +74,12 @@ def plot_html(fig, date_range):
 	)
 
 	fig.update_layout(
-		#autosize=True,
-		#height=300,
+		margin=go.layout.Margin(
+			l=0,
+			t=0,
+			r=0,
+			b=0
+		),
 		xaxis_showticklabels=True,
 		xaxis_tickformat='%-m/%-d/%Y'
 	)
