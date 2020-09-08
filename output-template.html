@@ -100,6 +100,11 @@
 		table, thead, tbody, th, td, tr { 
 			display: block; 
 		}
+
+		table {
+			border-top: 1px solid #ccc;
+			border-bottom: 1px solid #ccc;
+		}
 		
 		/* Hide table headers (but not display: none;, for accessibility) */
 		thead tr { 
@@ -111,7 +116,6 @@
 		td { 
 			/* Behave  like a "row" */
 			border: none;
-			border-bottom: 1px solid #eee; 
 			position: relative;
 			padding-left: 50%; 
 		}
@@ -120,7 +124,6 @@
 			padding-left: inherit;
 			padding-right: inherit;
 			border: none;
-			border-bottom: 1px solid #eee; 
 			position: relative;
 			padding-left: 50%; 
 		}
