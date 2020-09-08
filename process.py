@@ -49,6 +49,7 @@ def read_data():
 
 
 def plot_html(fig):
+	fig.update_layout(xaxis_tickformat='%-m/%-d/%Y')
 	config = {'staticPlot': True}
 	return fig.to_html(full_html=False, config=config, include_plotlyjs='cdn')
 
