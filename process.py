@@ -74,11 +74,13 @@ def plot_html(fig, date_range):
 	)
 
 	fig.update_layout(
+		#autosize=True,
+		#height=300,
 		xaxis_showticklabels=True,
 		xaxis_tickformat='%-m/%-d/%Y'
 	)
 
-	config = {'staticPlot': True}
+	config = {'staticPlot': True, 'responsive': True}
 	return fig.to_html(full_html=False, config=config, include_plotlyjs='cdn')
 
 

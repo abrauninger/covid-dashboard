@@ -4,29 +4,60 @@
 
 <head>
 <title>Covid-19 dashboard for King County, WA</title>
+
+<style>
+	.body-container {
+		max-width: 1200px;
+	}
+	
+	.plot-container {
+		height: 400px;
+	}
+
+	@media only screen and (max-width: 800px) {
+		.plot-container {
+			height: 300px;
+		}
+	}
+</style>
+
 </head>
 
 <body>
 
+<div class="body-container">
+
 <h2>New cases</h2>
 
+<div class="plot-container">
 ${new_cases_plot}
+</div>
 
 <h2>Hospitalizations</h2>
 
+<div class="plot-container">
 ${hospitalizations_plot}
+</div>
 
 <h2>Deaths</h2>
 
+<div class="plot-container">
 ${deaths_plot}
+</div>
 
 <h2>Tests</h2>
 
+<div class="plot-container">
 ${tests_plot}
+</div>
 
 <h2>Positive test rate</h2>
 
+<div class="plot-container">
 ${positive_test_rate_plot}
+</div>
+
+</div>
 
 </body>
 
