@@ -96,10 +96,10 @@ def plot_html(fig, date_range):
 	)
 
 	config = {
-		#'staticPlot': True,
+		'staticPlot': True,
 		'responsive': True
 	}
-
+	
 	return fig.to_html(full_html=False, config=config, include_plotlyjs='cdn')
 
 
