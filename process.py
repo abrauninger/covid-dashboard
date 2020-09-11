@@ -75,8 +75,15 @@ def min_max_dates(date_serieses):
 
 def plot_html(fig, date_range):
 	fig.update_xaxes(
+		fixedrange=True,
+		# Disable pan/zoom because otherwise the output page is unusable on mobile
 		range=date_range,
 		showgrid=True
+	)
+
+	fig.update_yaxes(
+		# Disable pan/zoom because otherwise the output page is unusable on mobile
+		fixedrange=True
 	)
 
 	fig.update_layout(
@@ -96,7 +103,7 @@ def plot_html(fig, date_range):
 	)
 
 	config = {
-		'staticPlot': True,
+		#'staticPlot': True,
 		'responsive': True
 	}
 	
@@ -107,7 +114,7 @@ def format_date(date: datetime.date):
 	return f'{date.month}/{date.day}/{date.year:4d}'
 
 
-def plot_with_plotly(data: Data, nytimes_pull_date: datetime.date, king_county_pull_date: datetime.date):
+def plot_with_plotly(data: Data, nytimes_pull_date: str, king_county_pull_date: str):
 	cols = plotly.colors.DEFAULT_PLOTLY_COLORS
 	black = 'rgb(0, 0, 0)'
 
@@ -217,8 +224,8 @@ def plot_with_plotly(data: Data, nytimes_pull_date: datetime.date, king_county_p
 		'deaths_plot': plot_html(deaths_fig, date_range),
 		'tests_plot': plot_html(tests_fig, date_range),
 		'positive_test_rate_plot': plot_html(positive_test_rate_fig, date_range),
-		'nytimes_pull_date': format_date(nytimes_pull_date),
-		'king_county_pull_date': format_date(king_county_pull_date),
+		'nytimes_pull_date': format_date(pd.to_datetime(nytimes_pull_date)),
+		'king_county_pull_date': format_date(pd.to_datetime(king_county_pull_date)),
 		'page_updated_date': format_date(datetime.date.today()),
 	}
 
@@ -226,6 +233,6 @@ def plot_with_plotly(data: Data, nytimes_pull_date: datetime.date, king_county_p
 	output_file.write(output_template.render(**template_data))
 
 
-def run(*, nytimes_pull_date: datetime.date, king_county_pull_date: datetime.date):
+def run(*, nytimes_pull_date: str, king_county_pull_date: str):
 	data = read_data()
 	plot_with_plotly(data, nytimes_pull_date, king_county_pull_date)
