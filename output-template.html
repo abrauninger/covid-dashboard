@@ -32,7 +32,7 @@
 		border-bottom: 1px solid #ccc;
 	}
 
-	table.data-sources-desktop th {
+	th {
 		text-align: left;
 		padding-right: 20px;
 	}
@@ -92,7 +92,7 @@
 		padding-right: 6px;
 	}
 
-	.mask-up-header {
+	.h2-at-end-of-page {
 		margin-top: 36px;
 	}
 
@@ -140,6 +140,7 @@
 
 <p>Last updated <strong>${page_updated_date}</strong>.</p>
 
+
 <h2>Data sources</h2>
 
 <table class="data-sources-desktop">
@@ -166,12 +167,14 @@
 	</tbody>
 </table>
 
+
 <h2>New cases</h2>
 
 <div class="plot-container">
 ${new_cases_plot}
 </div>
 <p class="source-attribution">Source: New York Times</p>
+
 
 <h2>Hospitalizations</h2>
 
@@ -180,12 +183,14 @@ ${hospitalizations_plot}
 </div>
 <p class="source-attribution">Source: King County Department of Health</p>
 
+
 <h2>Deaths</h2>
 
 <div class="plot-container">
 ${deaths_plot}
 </div>
 <p class="source-attribution">Source: New York Times</p>
+
 
 <h2>Tests</h2>
 
@@ -194,6 +199,7 @@ ${tests_plot}
 </div>
 <p class="source-attribution">Source: King County Department of Health</p>
 
+
 <h2>Positive test rate</h2>
 
 <div class="plot-container">
@@ -201,11 +207,29 @@ ${positive_test_rate_plot}
 </div>
 <p class="source-attribution">Sources: New York Times, King County Department of Health</p>
 
+
 <h2>Source code</h2>
 
 <p>The code that generated this page is available in the <a href="https://github.com/abrauninger/covid-dashboard"><code>covid-dashboard</code></a> repository on GitHub.</p>
 
-<h2 class="mask-up-header">Wear a mask</h2>
+
+<h2 class="h2-at-end-of-page">Other resources</h2>
+
+<p>You may find these helpful:</p>
+
+<table>
+	<thead>
+		<tr class="border-bottom"><th>Site</th><th>Notes</th></tr>
+	</thead>
+	<tbody>
+		<tr class="border-bottom"><td><a href="https://public.tableau.com/profile/public.health.seattle.king.county.covid#!/vizhome/PHSKCOverviewDashboard/Overview">King County Overview Dashboard</a></td><td><ul><li>Metrics per individual city</li><li>Not very usable on the phone, but excellent on a larger screen</li></ul></td></tr>
+		<tr class="border-bottom"><td><a href="https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html">New York Times "Covid in the U.S."</a></td><td><ul><li>Excellent nationwide data and per-state data</li><li>Fantastic visualizations, maps, and charts</li><li>Doesn't show testing or hopsitalization data</li></ul></td></tr>
+		<tr><td><a href="https://coronavirus.jhu.edu/map.html">Johns Hopkins COVID-19 Dashboard</a></td><td><ul><li>Perhaps the most authoritative source for world-wide COVID data</li></ul></td></tr>
+	</tbody>
+</table>
+
+
+<h2 class="h2-at-end-of-page">Wear a mask</h2>
 
 <p>Stay healthy out there.</p>
 
