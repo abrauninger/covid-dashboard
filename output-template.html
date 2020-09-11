@@ -130,6 +130,19 @@
 	}
 </style>
 
+<script>
+	// For Plotly plots to be usable in a mobile browser, we can specify `'staticPlot': true` to turn off all interactions,
+	// but that disables hovering over datapoints on desktop, which several users have requested.
+	// If we *don't* specify `'staticPlot': true`, the plots are pretty hard to use on mobile because they intercept
+	// touch gestures and make it difficult to scroll the page.
+	// See https://github.com/plotly/plotly.js/issues/2844 (still active as of 9/11/2020).
+	// To work around this limitation, we don't specify `'staticPlot': true` by default, and here we detect a mobile
+	// browser and programmatically set `staticPlot` to true on mobile.
+	document.addEventListener("DOMContentLoaded", function(){
+	    document.querySelectorAll('.plotly-graph-div').forEach(graphDiv => Plotly.plot(graphDiv, [], {}, {'staticPlot': true}))
+	});
+</script>
+
 </head>
 
 <body>
