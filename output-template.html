@@ -138,9 +138,15 @@
 	// See https://github.com/plotly/plotly.js/issues/2844 (still active as of 9/11/2020).
 	// To work around this limitation, we don't specify `'staticPlot': true` by default, and here we detect a mobile
 	// browser and programmatically set `staticPlot` to true on mobile.
-	document.addEventListener("DOMContentLoaded", function(){
-	    document.querySelectorAll('.plotly-graph-div').forEach(graphDiv => Plotly.plot(graphDiv, [], {}, {'staticPlot': true}))
-	});
+
+	// https://stackoverflow.com/questions/3514784/what-is-the-best-way-to-detect-a-mobile-device
+	let isMobile = window.matchMedia("only screen and (max-width: 800px)").matches;
+
+	if (isMobile) {
+		document.addEventListener("DOMContentLoaded", function() {
+		    document.querySelectorAll('.plotly-graph-div').forEach(graphDiv => Plotly.plot(graphDiv, [], {}, {'staticPlot': true}))
+		});
+	}
 </script>
 
 </head>
