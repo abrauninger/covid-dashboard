@@ -45,10 +45,10 @@ def read_data():
 	kc_test = pd.read_csv('king-county-data-download/covid-data-daily-counts-latest-tests.csv')
 	kc_test['Result_Date'] = pd.to_datetime(kc_test['Result_Date'])		# Not necessary when using `read_excel`
 	kc_test = kc_test[kc_test['Result_Date'].notnull()]
-	kc_test['Moving_Average_7_Day'] = kc_test['Tests'].rolling(7).mean()
+	kc_test['Moving_Average_7_Day'] = kc_test['People_Tested'].rolling(7).mean()
 
 	joined = kc.join(kc_test.set_index('Result_Date'), on='date')
-	joined['positive_test_rate'] = joined['new_cases'] / joined['Tests']
+	joined['positive_test_rate'] = joined['new_cases'] / joined['People_Tested']
 	joined['positive_test_rate_moving_average_7_day'] = joined['positive_test_rate'].rolling(7).mean()
 
 	# TODO: Return just one DataFrame
@@ -184,7 +184,7 @@ def plot_with_plotly(data: Data, nytimes_pull_date: str, king_county_pull_date: 
 		go.Bar(
 			name='Daily count',
 			x=data.tests['Result_Date'],
-			y=data.tests['Tests'],
+			y=data.tests['People_Tested'],
 			marker=dict(color=cols[3])
 		)
 	)
