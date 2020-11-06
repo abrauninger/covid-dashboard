@@ -1,0 +1,231 @@
+## -*- coding: utf-8 -*-
+
+<html>
+
+<head>
+<title>COVID-19 metrics for San Diego, CA</title>
+
+<meta name="viewport" content="width=device-width; initial-scale=1.0;" />
+
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro&display=swap" rel="stylesheet">
+
+<style>
+	body {
+		font-family: 'Source Serif Pro', serif;
+	}
+
+	table {
+		border-top: 1px solid #ccc;
+		border-bottom: 1px solid #ccc;
+		border-collapse: collapse;
+	}
+
+	table.data-sources-desktop {
+		display: none;
+	}
+
+	table.data-sources-mobile {
+		margin-bottom: 48px;
+	}
+
+	tr.border-bottom {
+		border-bottom: 1px solid #ccc;
+	}
+
+	th {
+		text-align: left;
+		padding-right: 20px;
+	}
+
+	table.data-sources-desktop th.not-first-column {
+		padding-left: 20px;
+	}
+
+	td {
+		vertical-align: top;
+	}
+
+	td.not-first-column {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	table.data-sources-mobile td {
+		border: none;
+		font-size: 90%;
+	}
+
+	ul {
+		padding-left: 20px;
+	}
+
+	table.data-sources-mobile td.not-first-column {
+		border: none;
+	}
+
+	table.data-sources-mobile ul {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	.body-container {
+		max-width: 1200px;
+	}
+
+	.plot-container {
+		height: 200px;
+	}
+
+	.source-attribution {
+		text-align: right;
+		font-family: 'Source Sans', sans-serif;
+		font-size: 12px;
+		font-style: italic;
+		margin-top: 4px;
+		margin-bottom: 28px;
+	}
+
+	code {
+		font-size: 16px;
+		background-color: #eee;
+		padding-left: 6px;
+		padding-right: 6px;
+	}
+
+	.h2-at-end-of-page {
+		margin-top: 36px;
+	}
+
+	.mask-up-img {
+		max-width: 100%;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	@media only screen and (min-width: 600px) {
+		.mask-up-img  {
+			max-width: 600px;
+		}
+	}
+
+	@media only screen and (min-width: 800px) {
+		table.data-sources-desktop {
+			display: inherit;
+			margin-top: 24px;
+			margin-bottom: 24px;
+		}
+
+		table.data-sources-mobile {
+			display: none;
+		}
+
+		.plot-container {
+			height: 300px;
+		}
+
+		.source-attribution {
+			margin-bottom: 40px;
+		}
+	}
+</style>
+
+<script>
+	// For Plotly plots to be usable in a mobile browser, we can specify `'staticPlot': true` to turn off all interactions,
+	// but that disables hovering over datapoints on desktop, which several users have requested.
+	// If we *don't* specify `'staticPlot': true`, the plots are pretty hard to use on mobile because they intercept
+	// touch gestures and make it difficult to scroll the page.
+	// See https://github.com/plotly/plotly.js/issues/2844 (still active as of 9/11/2020).
+	// To work around this limitation, we don't specify `'staticPlot': true` by default, and here we detect a mobile
+	// browser and programmatically set `staticPlot` to true on mobile.
+
+	// https://stackoverflow.com/questions/3514784/what-is-the-best-way-to-detect-a-mobile-device
+	let isMobile = window.matchMedia("only screen and (max-width: 800px)").matches;
+
+	if (isMobile) {
+		document.addEventListener("DOMContentLoaded", function() {
+		    document.querySelectorAll('.plotly-graph-div').forEach(graphDiv => Plotly.plot(graphDiv, [], {}, {'staticPlot': true}))
+		});
+	}
+</script>
+
+</head>
+
+<body>
+
+<div class="body-container">
+
+<h1>COVID-19 metrics for San Diego, CA</h1>
+
+<p>Last updated <strong>${page_updated_date}</strong>.</p>
+
+
+<h2>Data sources</h2>
+
+<table class="data-sources-desktop">
+	<thead>
+		<tr class="border-bottom"><th>Source</th><th class="not-first-column">Used for</th><th class="not-first-column">Availability</th><th class="not-first-column">Last pulled</th></tr>
+	</thead>
+	<tbody>
+		<tr class="border-bottom"><td><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td><td class="not-first-column"><ul><li>New cases</li><li>Deaths</li></ul></td><td class="not-first-column">Many times per day</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
+	</tbody>
+</table>
+
+<table class="data-sources-mobile">
+	<tbody>
+		<tr><td class="source-label">Source:</td><td class="not-first-column"><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td></tr>
+		<tr><td class="source-label">Used for:</td><td class="not-first-column"><ul><li>New cases</li><li>Deaths</li></ul></td></tr>
+		<tr><td class="source-label">Availability:</td><td class="not-first-column">Many times per day</td></tr>
+		<tr class="border-bottom"><td class="source-label">Last pulled:</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
+	</tbody>
+</table>
+
+
+<h2>New cases</h2>
+
+<div class="plot-container">
+${new_cases_plot}
+</div>
+<p class="source-attribution">Source: New York Times</p>
+
+
+<h2>Deaths</h2>
+
+<div class="plot-container">
+${deaths_plot}
+</div>
+<p class="source-attribution">Source: New York Times</p>
+
+
+<h2>Source code</h2>
+
+<p>The code that generated this page is available in the <a href="https://github.com/abrauninger/covid-dashboard"><code>covid-dashboard</code></a> repository on GitHub.</p>
+
+
+<h2 class="h2-at-end-of-page">Other resources</h2>
+
+<p>You may find these helpful:</p>
+
+<table>
+	<thead>
+		<tr class="border-bottom"><th>Site</th><th>Notes</th></tr>
+	</thead>
+	<tbody>
+		<tr class="border-bottom"><td><a href="https://public.tableau.com/profile/public.health.seattle.king.county.covid#!/vizhome/PHSKCOverviewDashboard/Overview">King County Overview Dashboard</a></td><td><ul><li>Metrics per individual city</li><li>Not very usable on the phone, but excellent on a larger screen</li></ul></td></tr>
+		<tr class="border-bottom"><td><a href="https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html">New York Times "Covid in the U.S."</a></td><td><ul><li>Excellent nationwide data and per-state data</li><li>Fantastic visualizations, maps, and charts</li><li>Doesn't show testing or hopsitalization data</li></ul></td></tr>
+		<tr><td><a href="https://coronavirus.jhu.edu/map.html">Johns Hopkins COVID-19 Dashboard</a></td><td><ul><li>Perhaps the most authoritative source for world-wide COVID data</li></ul></td></tr>
+	</tbody>
+</table>
+
+
+<h2 class="h2-at-end-of-page">Wear a mask</h2>
+
+<p>Stay healthy out there.</p>
+
+<a href="https://coronavirus.wa.gov/masks"><img class="mask-up-img" src="DOH-COVID19-MaskUp-970x250-ENG.gif" /></a>
+
+</div>
+
+</body>
+
+</html>
