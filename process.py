@@ -31,18 +31,18 @@ def read_data():
 	kc['new_cases_moving_average_7_day'] = kc['new_cases'].rolling(7).mean()
 	kc['new_deaths_moving_average_7_day'] = kc['new_deaths'].rolling(7).mean()
 
-	kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-2020-09-08.xlsx'
+	#kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-2020-09-08.xlsx'
 
 	# `read_excel` appears to have a bug that silently drops recent data from the xlsx file, for some reason
 	# For now, work around this by reading from CSV instead
 	#kc_hosp = pd.read_excel(kc_xlsx_file, sheet_name='Hospitalizations')
-	kc_hosp = pd.read_csv('king-county-data-download/covid-data-daily-counts-latest-hospitalizations.csv')
+	kc_hosp = pd.read_csv('king-county-data-download/daily-counts-and-rate-latest-hospitalizations.csv')
 	kc_hosp['Admission_Date'] = pd.to_datetime(kc_hosp['Admission_Date'])		# Not necessary when using `read_excel`
 	kc_hosp = kc_hosp[kc_hosp['Admission_Date'].notnull()]
 	kc_hosp['Moving_Average_7_Day'] = kc_hosp['Hospitalizations'].rolling(7).mean()
 
 	#kc_test = pd.read_excel(kc_xlsx_file, sheet_name='Tests')
-	kc_test = pd.read_csv('king-county-data-download/covid-data-daily-counts-latest-tests.csv')
+	kc_test = pd.read_csv('king-county-data-download/daily-counts-and-rate-latest-tests.csv')
 	kc_test['Result_Date'] = pd.to_datetime(kc_test['Result_Date'])		# Not necessary when using `read_excel`
 	kc_test = kc_test[kc_test['Result_Date'].notnull()]
 	kc_test['Moving_Average_7_Day'] = kc_test['People_Tested'].rolling(7).mean()
