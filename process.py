@@ -8,28 +8,38 @@ from plotly.subplots import make_subplots
 from typing import NamedTuple
 
 
-class Data(NamedTuple):
+class KingCountyData(NamedTuple):
 	cases_and_deaths: pd.DataFrame
 	hospitalizations: pd.DataFrame
 	tests: pd.DataFrame
 	positive_test_rate: pd.DataFrame
 
 
-def read_data():
+class SanDiegoData(NamedTuple):
+	cases_and_deaths: pd.DataFrame
+
+
+def read_nytimes_data(state: str, county: str):
 	df = pd.read_csv('covid-19-data/us-counties.csv')
 
-	kc = df[(df['state'] == 'Washington') & (df['county'] == 'King')]
-	kc = kc[['date', 'cases', 'deaths']]
-	kc['new_cases'] = kc['cases'].diff().astype('Int64')
-	kc['new_deaths'] = kc['deaths'].diff().astype('Int64')
+	nyt = df[(df['state'] == state) & (df['county'] == county)]
+	nyt = nyt[['date', 'cases', 'deaths']]
+	nyt['new_cases'] = nyt['cases'].diff().astype('Int64')
+	nyt['new_deaths'] = nyt['deaths'].diff().astype('Int64')
 
 	# Drop the first row with NaN diff values.
-	kc = kc.drop(kc.index[0])
+	nyt = nyt.drop(nyt.index[0])
 
-	kc['date'] = pd.to_datetime(kc['date'])
+	nyt['date'] = pd.to_datetime(nyt['date'])
 
-	kc['new_cases_moving_average_7_day'] = kc['new_cases'].rolling(7).mean()
-	kc['new_deaths_moving_average_7_day'] = kc['new_deaths'].rolling(7).mean()
+	nyt['new_cases_moving_average_7_day'] = nyt['new_cases'].rolling(7).mean()
+	nyt['new_deaths_moving_average_7_day'] = nyt['new_deaths'].rolling(7).mean()
+
+	return nyt
+
+
+def read_kc_data():
+	kc = read_nytimes_data(state='Washington', county='King')
 
 	#kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-2020-09-08.xlsx'
 
@@ -52,7 +62,12 @@ def read_data():
 	joined['positive_test_rate_moving_average_7_day'] = joined['positive_test_rate'].rolling(7).mean()
 
 	# TODO: Return just one DataFrame
-	return Data(cases_and_deaths=kc, hospitalizations=kc_hosp, tests=kc_test, positive_test_rate=joined)
+	return KingCountyData(cases_and_deaths=kc, hospitalizations=kc_hosp, tests=kc_test, positive_test_rate=joined)
+
+
+def read_sd_data():
+	sd = read_nytimes_data(state='California', county='San Diego')
+	return SanDiegoData(cases_and_deaths=sd)
 
 
 def min_max_dates(date_serieses):
@@ -116,14 +131,25 @@ def format_date(date: datetime.date):
 	return f'{date.month}/{date.day}/{date.year:4d}'
 
 
-def plot_with_plotly(data: Data, nytimes_pull_date: str, king_county_pull_date: str):
+def plot_with_plotly(
+	data,
+	location: str,
+	nytimes_pull_date: str,
+	king_county_pull_date: str,
+	plot_county: bool,
+	output_file_name: str):
+
 	cols = plotly.colors.DEFAULT_PLOTLY_COLORS
 	black = 'rgb(0, 0, 0)'
 
 	axis_tickmark_font_size = 22
 	subplot_title_font_size = 30
 
-	date_range = min_max_dates([data.cases_and_deaths['date'], data.hospitalizations['Admission_Date'], data.tests['Result_Date'], data.positive_test_rate['date']])
+	date_range_series = [data.cases_and_deaths['date']]
+	if plot_county:
+		date_range_series.extend([data.hospitalizations['Admission_Date'], data.tests['Result_Date'], data.positive_test_rate['date']])
+
+	date_range = min_max_dates(date_range_series)
 
 	new_cases_fig = go.Figure()
 	new_cases_fig.add_trace(
@@ -143,23 +169,24 @@ def plot_with_plotly(data: Data, nytimes_pull_date: str, king_county_pull_date: 
 		)
 	)
 
-	hospitalizations_fig = go.Figure()
-	hospitalizations_fig.add_trace(
-		go.Bar(
-			name='Daily count',
-			x=data.hospitalizations['Admission_Date'],
-			y=data.hospitalizations['Hospitalizations'],
-			marker=dict(color=cols[1])
+	if plot_county:
+		hospitalizations_fig = go.Figure()
+		hospitalizations_fig.add_trace(
+			go.Bar(
+				name='Daily count',
+				x=data.hospitalizations['Admission_Date'],
+				y=data.hospitalizations['Hospitalizations'],
+				marker=dict(color=cols[1])
+			)
 		)
-	)
-	hospitalizations_fig.add_trace(
-		go.Scatter(
-			name='7-day average',
-			x=data.hospitalizations['Admission_Date'],
-			y=data.hospitalizations['Moving_Average_7_Day'],
-			line=dict(width=2, color=black)
+		hospitalizations_fig.add_trace(
+			go.Scatter(
+				name='7-day average',
+				x=data.hospitalizations['Admission_Date'],
+				y=data.hospitalizations['Moving_Average_7_Day'],
+				line=dict(width=2, color=black)
+			)
 		)
-	)
 
 	deaths_fig = go.Figure()
 	deaths_fig.add_trace(
@@ -179,62 +206,80 @@ def plot_with_plotly(data: Data, nytimes_pull_date: str, king_county_pull_date: 
 		)
 	)
 
-	tests_fig = go.Figure()
-	tests_fig.add_trace(
-		go.Bar(
-			name='Daily count',
-			x=data.tests['Result_Date'],
-			y=data.tests['People_Tested'],
-			marker=dict(color=cols[3])
+	if plot_county:
+		tests_fig = go.Figure()
+		tests_fig.add_trace(
+			go.Bar(
+				name='Daily count',
+				x=data.tests['Result_Date'],
+				y=data.tests['People_Tested'],
+				marker=dict(color=cols[3])
+			)
 		)
-	)
-	tests_fig.add_trace(
-		go.Scatter(
-			name='7-day average',
-			x=data.tests['Result_Date'],
-			y=data.tests['Moving_Average_7_Day'],
-			line=dict(width=2, color=black)
+		tests_fig.add_trace(
+			go.Scatter(
+				name='7-day average',
+				x=data.tests['Result_Date'],
+				y=data.tests['Moving_Average_7_Day'],
+				line=dict(width=2, color=black)
+			)
 		)
-	)
 
-	positive_test_rate_fig = go.Figure()
-	positive_test_rate_fig.add_trace(
-		go.Bar(
-			name='Daily count',
-			x=data.positive_test_rate['date'],
-			y=data.positive_test_rate['positive_test_rate'],
-			marker=dict(color=cols[4])
+		positive_test_rate_fig = go.Figure()
+		positive_test_rate_fig.add_trace(
+			go.Bar(
+				name='Daily count',
+				x=data.positive_test_rate['date'],
+				y=data.positive_test_rate['positive_test_rate'],
+				marker=dict(color=cols[4])
+			)
 		)
-	)
-	positive_test_rate_fig.add_trace(
-		go.Scatter(
-			name='7-day average',
-			x=data.positive_test_rate['date'],
-			y=data.positive_test_rate['positive_test_rate_moving_average_7_day'],
-			line=dict(width=2, color=black)
+		positive_test_rate_fig.add_trace(
+			go.Scatter(
+				name='7-day average',
+				x=data.positive_test_rate['date'],
+				y=data.positive_test_rate['positive_test_rate_moving_average_7_day'],
+				line=dict(width=2, color=black)
+			)
 		)
-	)
-	positive_test_rate_fig.update_yaxes(range=[0, 0.3])
-	positive_test_rate_fig.update_layout(yaxis_tickformat='%')
+		positive_test_rate_fig.update_yaxes(range=[0, 0.3])
+		positive_test_rate_fig.update_layout(yaxis_tickformat='%')
 
 	# Write wrapper HTML
 	output_template = mako.template.Template(filename='output-template.html', output_encoding='utf-8')
 
-	template_data = {
-		'new_cases_plot': plot_html(new_cases_fig, date_range),
-		'hospitalizations_plot': plot_html(hospitalizations_fig, date_range),
-		'deaths_plot': plot_html(deaths_fig, date_range),
-		'tests_plot': plot_html(tests_fig, date_range),
-		'positive_test_rate_plot': plot_html(positive_test_rate_fig, date_range),
-		'nytimes_pull_date': format_date(pd.to_datetime(nytimes_pull_date)),
-		'king_county_pull_date': format_date(pd.to_datetime(king_county_pull_date)),
-		'page_updated_date': format_date(datetime.date.today()),
-	}
+	template_data = None
 
-	output_file = open('output/output.html', 'wb')
+	if plot_county:
+		template_data = {
+			'location': location,
+			'new_cases_plot': plot_html(new_cases_fig, date_range),
+			'deaths_plot': plot_html(deaths_fig, date_range),
+			'nytimes_pull_date': format_date(pd.to_datetime(nytimes_pull_date)),
+			'page_updated_date': format_date(datetime.date.today()),
+			'plot_county': True,
+			'hospitalizations_plot': plot_html(hospitalizations_fig, date_range),
+			'tests_plot': plot_html(tests_fig, date_range),
+			'positive_test_rate_plot': plot_html(positive_test_rate_fig, date_range),
+			'king_county_pull_date': format_date(pd.to_datetime(king_county_pull_date)),
+		}
+	else:
+		# TODO: Reduce code duplication with above?
+		template_data = {
+			'location': location,
+			'new_cases_plot': plot_html(new_cases_fig, date_range),
+			'deaths_plot': plot_html(deaths_fig, date_range),
+			'nytimes_pull_date': format_date(pd.to_datetime(nytimes_pull_date)),
+			'page_updated_date': format_date(datetime.date.today()),
+		}
+
+	output_file = open(f'output/{output_file_name}', 'wb')
 	output_file.write(output_template.render(**template_data))
 
 
 def run(*, nytimes_pull_date: str, king_county_pull_date: str):
-	data = read_data()
-	plot_with_plotly(data, nytimes_pull_date, king_county_pull_date)
+	kc = read_kc_data()
+	sd = read_sd_data()
+
+	plot_with_plotly(kc, 'King County, WA', nytimes_pull_date, king_county_pull_date, plot_county=True, output_file_name='output.html')
+	plot_with_plotly(sd, 'San Diego, CA', nytimes_pull_date, king_county_pull_date=None, plot_county=False, output_file_name='output-san-diego.html')
