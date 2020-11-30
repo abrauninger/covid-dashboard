@@ -1,5 +1,6 @@
 import datetime
 import mako.template
+import numpy as np
 import pandas as pd
 import plotly
 import plotly.graph_objs as go
@@ -123,6 +124,8 @@ def read_kc_data():
 
 		kc_pos = kc_pos.join(nyt_subset.set_index('date'), on='Result_Date', how='outer')
 
+		kc_pos['Positives'] = np.where(kc_pos['Positives'].isnull(), kc_pos['Positives_Projected'], kc_pos['Positives'])
+
 	# TODO: Return just one DataFrame
 	return KingCountyData(
 		positives=kc_pos,
@@ -184,6 +187,7 @@ def plot_with_plotly(
 
 	cols = plotly.colors.DEFAULT_PLOTLY_COLORS
 	black = 'rgb(0, 0, 0)'
+	recent_highlight_color = 'rgba(0, 0, 0, 0.15)'
 
 	axis_tickmark_font_size = 22
 	subplot_title_font_size = 30
@@ -206,14 +210,6 @@ def plot_with_plotly(
 		)
 	)
 	new_cases_fig.add_trace(
-		go.Bar(
-			name='Daily count (projected)',
-			x=data.positives['Result_Date'],
-			y=data.positives['Positives_Projected'],
-			marker=dict(color=cols[1])
-		)
-	)
-	new_cases_fig.add_trace(
 		go.Scatter(
 			name='7-day average',
 			x=data.positives['Result_Date'],
@@ -230,7 +226,7 @@ def plot_with_plotly(
 		x1=date_range.max_date,
 		y1=1,
 		line=dict(color='rgba(0,0,0,0)',width=3,),
-		fillcolor='rgba(200, 0, 200, 0.2)',
+		fillcolor=recent_highlight_color,
 		layer='below')
 
 	hospitalizations_fig = go.Figure()
