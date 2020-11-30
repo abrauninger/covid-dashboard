@@ -161,7 +161,7 @@
 <div class="plot-container">
 ${new_cases_plot}
 </div>
-<p class="source-attribution">Source: King County Department of Health</p>
+<p class="source-attribution">Sources: King County Department of Health, New York Times (recent days)</p>
 
 
 <h2>Hospitalizations</h2>
@@ -194,14 +194,16 @@ ${tests_plot}
 ${positive_test_rate_plot}
 </div>
 <p class="source-attribution">Source: King County Department of Health</p>
+<p class="source-attribution">See notes below on how this differs from King County's own "Test positivity" metric</p>
 
 
 <h2>Definitions</h2>
 
-<p><strong>New cases:</strong> Unique people receiving a positive test result each day</p>
-<p><strong>Tests:</strong> Unique people receiving a test result each day</p>
+<p><strong>New cases:</strong> Unique people receiving a positive test result each day.</p>
+<p><strong>Tests:</strong> Unique people receiving a test result each day.</p>
 <p><strong>Positive test rate:</strong> <em>New cases</em> divided by <em>Tests</em>.</p>
-<p>Note that a more straightforward way to calculate positive test rate would be <em>Positive test results</em> (which might count one a single person more than once) divided by <em>Total tests</em> (which might also count a single person more than once). King County does not report positive test results &mdash; only unique people tested &mdash; so I am using the unique-person metrics to calculate positivity rate.</p>
+<p>Note this definition of positive test rate differs from King County's own &ldquo;Test positivity&rdquo; metric.  It&rsquo;s unclear to me how King County calculates "test positivity," but I presume it is calculated as the percentage of total test results that are positive.  This metric would potentially double-count individuals who are tested more than once.</p>
+<p>King County's public data download does not include total positive test results, so instead of that simple metric, I am using the definition of &ldquo;positive test rate&rdquo; that divides the unique-person metrics of <em>New cases</em> and <em>Tests</em>.  The unique-person metric is usually much higher than the per-test metric that is reported by the county, but the shapes of the two curves are quite similar.</p>
 
 
 <h2 class="h2-at-end-of-page">Data sources</h2>
