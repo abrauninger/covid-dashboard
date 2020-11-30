@@ -15,6 +15,7 @@ class DateRange(NamedTuple):
 
 class KingCountyData(NamedTuple):
 	positives: pd.DataFrame
+	positives_last_good_date: datetime.date
 	hospitalizations: pd.DataFrame
 	deaths: pd.DataFrame
 	tests: pd.DataFrame
@@ -125,6 +126,7 @@ def read_kc_data():
 	# TODO: Return just one DataFrame
 	return KingCountyData(
 		positives=kc_pos,
+		positives_last_good_date=new_cases_date_range_kc.max_date,
 		hospitalizations=kc_hosp,
 		deaths=kc_deaths,
 		tests=kc_test,
@@ -219,6 +221,17 @@ def plot_with_plotly(
 			line=dict(width=2, color=black)
 		)
 	)
+	new_cases_fig.add_shape(
+		type='rect',
+		xref='x',
+		yref='paper',
+		x0=data.positives_last_good_date,
+		y0=0,
+		x1=date_range.max_date,
+		y1=1,
+		line=dict(color='rgba(0,0,0,0)',width=3,),
+		fillcolor='rgba(200, 0, 200, 0.2)',
+		layer='below')
 
 	hospitalizations_fig = go.Figure()
 	hospitalizations_fig.add_trace(
