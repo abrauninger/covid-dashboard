@@ -8,8 +8,12 @@ from plotly.subplots import make_subplots
 from typing import NamedTuple
 
 
+class DateRange(NamedTuple):
+	min_date: datetime.date
+	max_date: datetime.date
+
+
 class KingCountyData(NamedTuple):
-	cases_and_deaths_nyt: pd.DataFrame
 	positives: pd.DataFrame
 	hospitalizations: pd.DataFrame
 	deaths: pd.DataFrame
@@ -17,8 +21,32 @@ class KingCountyData(NamedTuple):
 	positive_test_rate: pd.DataFrame
 
 
-class SanDiegoData(NamedTuple):
-	cases_and_deaths_nyt: pd.DataFrame
+def min_max_dates(date_serieses):
+	min_date = None
+	max_date = None
+
+	for date_series in date_serieses:
+		series_min_date = date_series.min()
+		series_max_date = date_series.max()
+
+		if min_date is None or series_min_date < min_date:
+			min_date = series_min_date
+		if max_date is None or series_max_date > max_date:
+			max_date = series_max_date
+
+	return DateRange(min_date, max_date)
+
+
+def overlapping_date_range(range_1, range_2):
+	min_date = range_1.min_date
+	max_date = range_1.max_date
+
+	if range_2.min_date > min_date:
+		min_date = range_2.min_date
+	if range_2.max_date < max_date:
+		max_date = range_2.max_date
+
+	return DateRange(min_date, max_date)
 
 
 def read_nytimes_data(state: str, county: str):
@@ -41,7 +69,7 @@ def read_nytimes_data(state: str, county: str):
 
 
 def read_kc_data():
-	kc_nyt = read_nytimes_data(state='Washington', county='King')
+	nyt = read_nytimes_data(state='Washington', county='King')
 
 	#kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-2020-09-08.xlsx'
 
@@ -76,9 +104,26 @@ def read_kc_data():
 	joined['positive_test_rate'] = joined['Positives'] / joined['People_Tested']
 	joined['positive_test_rate_moving_average_7_day'] = joined['positive_test_rate'].rolling(7).mean()
 
+	# Use NYT data to project recent days of new cases that haven't been reported by King County yet
+	new_cases_date_range_kc = min_max_dates([kc_pos['Result_Date']])
+	new_cases_date_range_nyt = min_max_dates([nyt['date']])
+
+	if new_cases_date_range_nyt.max_date > new_cases_date_range_kc.max_date:
+		date_range_overlap = overlapping_date_range(new_cases_date_range_nyt, new_cases_date_range_kc)
+
+		new_cases_kc = kc_pos[(kc_pos['Result_Date'] >= date_range_overlap.min_date) & (kc_pos['Result_Date'] <= date_range_overlap.max_date)]
+		new_cases_nyt = nyt[(nyt['date'] >= date_range_overlap.min_date) & (nyt['date'] <= date_range_overlap.max_date)]
+
+		ratio = new_cases_kc['Positives'].sum() / new_cases_nyt['new_cases'].sum()
+
+		nyt_subset = nyt[(nyt['date']) > new_cases_date_range_kc.max_date].copy()
+		nyt_subset['Positives_Projected'] = nyt_subset['new_cases'] * ratio
+		nyt_subset = nyt_subset[['date', 'Positives_Projected']]
+
+		kc_pos = kc_pos.join(nyt_subset.set_index('date'), on='Result_Date', how='outer')
+
 	# TODO: Return just one DataFrame
 	return KingCountyData(
-		cases_and_deaths_nyt=kc_nyt,
 		positives=kc_pos,
 		hospitalizations=kc_hosp,
 		deaths=kc_deaths,
@@ -86,34 +131,11 @@ def read_kc_data():
 		positive_test_rate=joined)
 
 
-def read_sd_data():
-	sd = read_nytimes_data(state='California', county='San Diego')
-	return SanDiegoData(cases_and_deaths_nyt=sd)
-
-
-def min_max_dates(date_serieses):
-	# Hospitalizations started in King County prior to 3/1/2020, but all other data series are relevant after 3/1/2020.
-	# Hard-code start date to 3/1/2020
-	min_date = datetime.date(2020, 3, 1)
-	max_date = None
-
-	for date_series in date_serieses:
-		series_min_date = date_series.min()
-		series_max_date = date_series.max()
-
-		# if min_date is None or series_min_date < min_date:
-		# 	min_date = series_min_date
-		if max_date is None or series_max_date > max_date:
-			max_date = series_max_date
-
-	return [min_date, max_date]
-
-
 def plot_html(fig, date_range):
 	fig.update_xaxes(
 		fixedrange=True,
 		# Disable pan/zoom because otherwise the output page is unusable on mobile
-		range=date_range,
+		range=[date_range.min_date, date_range.max_date],
 		showgrid=True
 	)
 
@@ -164,9 +186,13 @@ def plot_with_plotly(
 	axis_tickmark_font_size = 22
 	subplot_title_font_size = 30
 
-	date_range_series = [data.cases_and_deaths_nyt['date'], data.positives['Result_Date'], data.hospitalizations['Admission_Date'], data.tests['Result_Date'], data.positive_test_rate['Result_Date']]
+	date_range_series = [data.positives['Result_Date'], data.hospitalizations['Admission_Date'], data.tests['Result_Date'], data.positive_test_rate['Result_Date']]
 
 	date_range = min_max_dates(date_range_series)
+
+	# Hospitalizations started in King County prior to 3/1/2020, but all other data series are relevant after 3/1/2020.
+	# Hard-code start date to 3/1/2020
+	date_range = DateRange(min_date=datetime.date(2020, 3, 1), max_date=date_range.max_date)
 
 	new_cases_fig = go.Figure()
 	new_cases_fig.add_trace(
@@ -175,6 +201,14 @@ def plot_with_plotly(
 			x=data.positives['Result_Date'],
 			y=data.positives['Positives'],
 			marker=dict(color=cols[0])
+		)
+	)
+	new_cases_fig.add_trace(
+		go.Bar(
+			name='Daily count (projected)',
+			x=data.positives['Result_Date'],
+			y=data.positives['Positives_Projected'],
+			marker=dict(color=cols[1])
 		)
 	)
 	new_cases_fig.add_trace(
