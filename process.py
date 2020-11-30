@@ -110,12 +110,25 @@ def read_kc_data():
 	joined['positive_test_rate'] = joined['Positives'] / joined['People_Tested']
 	joined['positive_test_rate_moving_average_7_day'] = joined['positive_test_rate'].rolling(7).mean()
 
+	hospitalizations_last_good_date = min_max_dates([kc_hosp['Admission_Date']]).max_date - datetime.timedelta(days=7)
+	kc_hosp['Moving_Average_7_Day'] = np.where(kc_hosp['Admission_Date'] > hospitalizations_last_good_date, np.nan, kc_hosp['Moving_Average_7_Day'])
+	
+	deaths_last_good_date = min_max_dates([kc_deaths['Death_Date']]).max_date - datetime.timedelta(days=7)
+	kc_deaths['Moving_Average_7_Day'] = np.where(kc_deaths['Death_Date'] > deaths_last_good_date, np.nan, kc_deaths['Moving_Average_7_Day'])
+
+	tests_last_good_date = min_max_dates([kc_test['Result_Date']]).max_date - datetime.timedelta(days=7)
+	kc_test['Moving_Average_7_Day'] = np.where(kc_test['Result_Date'] > tests_last_good_date, np.nan, kc_test['Moving_Average_7_Day'])
+
+	positive_test_rate_last_good_date = min_max_dates([joined['Result_Date']]).max_date - datetime.timedelta(days=7)
+	joined['positive_test_rate_moving_average_7_day'] = np.where(joined['Result_Date'] > positive_test_rate_last_good_date, np.nan, joined['positive_test_rate_moving_average_7_day'])
+
 	# Use NYT data to project recent days of new cases that haven't been reported by King County yet
 	new_cases_date_range_kc = min_max_dates([kc_pos['Result_Date']])
-	new_cases_date_range_nyt = min_max_dates([nyt['date']])
+	deaths_date_range_kc = min_max_dates([kc_deaths['Death_Date']])
+	date_range_nyt = min_max_dates([nyt['date']])
 
-	if new_cases_date_range_nyt.max_date > new_cases_date_range_kc.max_date:
-		date_range_overlap = overlapping_date_range(new_cases_date_range_nyt, new_cases_date_range_kc)
+	if date_range_nyt.max_date > new_cases_date_range_kc.max_date:
+		date_range_overlap = overlapping_date_range(date_range_nyt, new_cases_date_range_kc)
 
 		new_cases_kc = kc_pos[(kc_pos['Result_Date'] >= date_range_overlap.min_date) & (kc_pos['Result_Date'] <= date_range_overlap.max_date)]
 		new_cases_nyt = nyt[(nyt['date'] >= date_range_overlap.min_date) & (nyt['date'] <= date_range_overlap.max_date)]
@@ -130,17 +143,21 @@ def read_kc_data():
 
 		kc_pos['Positives'] = np.where(kc_pos['Positives'].isnull(), kc_pos['Positives_Projected'], kc_pos['Positives'])
 
-	hospitalizations_last_good_date = min_max_dates([kc_hosp['Admission_Date']]).max_date - datetime.timedelta(days=7)
-	kc_hosp['Moving_Average_7_Day'] = np.where(kc_hosp['Admission_Date'] > hospitalizations_last_good_date, np.nan, kc_hosp['Moving_Average_7_Day'])
-	
-	deaths_last_good_date = min_max_dates([kc_deaths['Death_Date']]).max_date - datetime.timedelta(days=7)
-	kc_deaths['Moving_Average_7_Day'] = np.where(kc_deaths['Death_Date'] > deaths_last_good_date, np.nan, kc_deaths['Moving_Average_7_Day'])
+	if date_range_nyt.max_date > deaths_date_range_kc.max_date:
+		date_range_overlap = overlapping_date_range(date_range_nyt, deaths_date_range_kc)
 
-	tests_last_good_date = min_max_dates([kc_test['Result_Date']]).max_date - datetime.timedelta(days=7)
-	kc_test['Moving_Average_7_Day'] = np.where(kc_test['Result_Date'] > tests_last_good_date, np.nan, kc_test['Moving_Average_7_Day'])
+		deaths_kc = kc_deaths[(kc_deaths['Death_Date'] >= date_range_overlap.min_date) & (kc_deaths['Death_Date'] <= date_range_overlap.max_date)]
+		new_cases_nyt = nyt[(nyt['date'] >= date_range_overlap.min_date) & (nyt['date'] <= date_range_overlap.max_date)]
 
-	positive_test_rate_last_good_date = min_max_dates([joined['Result_Date']]).max_date - datetime.timedelta(days=7)
-	joined['positive_test_rate_moving_average_7_day'] = np.where(joined['Result_Date'] > positive_test_rate_last_good_date, np.nan, joined['positive_test_rate_moving_average_7_day'])
+		ratio = deaths_kc['Deaths'].sum() / new_cases_nyt['new_cases'].sum()
+
+		nyt_subset = nyt[(nyt['date']) > deaths_date_range_kc.max_date].copy()
+		nyt_subset['Deaths_Projected'] = nyt_subset['new_deaths'] * ratio
+		nyt_subset = nyt_subset[['date', 'Deaths_Projected']]
+
+		kc_deaths = kc_deaths.join(nyt_subset.set_index('date'), on='Death_Date', how='outer')
+
+		kc_deaths['Deaths'] = np.where(kc_deaths['Deaths'].isnull(), kc_deaths['Deaths_Projected'], kc_deaths['Deaths'])
 
 	# TODO: Return just one DataFrame
 	return KingCountyData(

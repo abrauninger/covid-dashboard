@@ -206,7 +206,8 @@ ${deaths_plot}
 <p><strong>Notes:</strong></p>
 <ul>
 	<li>For the shaded area, some data was available to download from the King County Department of Health, but it is most likely undercounted due to a lag in reporting deaths.</li>
-	<li>The <a href="https://public.tableau.com/profile/public.health.seattle.king.county.covid#!/vizhome/PHSKCOverviewDashboard/Overview">county's own dashboard</a> may have more up-to-date data on deaths.
+	<li>The <a href="https://public.tableau.com/profile/public.health.seattle.king.county.covid#!/vizhome/PHSKCOverviewDashboard/Overview">county's own dashboard</a> may have more up-to-date data on deaths.</li>
+	<li>The shaded area is filled in with data from the New York Times's dataset for King County, scaled slightly to represent the average discrepancy between the two datasets.</li>
 </ul>
 </div>
 
@@ -247,7 +248,7 @@ ${positive_test_rate_plot}
 <p><strong>New cases:</strong> Unique people receiving a positive test result each day.</p>
 <p><strong>Tests:</strong> Unique people receiving a test result each day.</p>
 <p><strong>Positive test rate:</strong> <em>New cases</em> divided by <em>Tests</em>.</p>
-<p>Note this definition of positive test rate differs from King County's own &ldquo;Test positivity&rdquo; metric.  It&rsquo;s unclear to me how King County calculates &ldquo;test positivity,&rdquo; but I presume it is calculated as the percentage of total test results that are positive.  This metric would potentially double-count individuals who are tested more than once.</p>
+<p>Note this definition of positive test rate differs from King County's own &ldquo;test positivity&rdquo; metric.  It&rsquo;s unclear to me how King County calculates &ldquo;test positivity,&rdquo; but I presume it is calculated as the percentage of total test results that are positive.  This metric would potentially double-count individuals who are tested more than once.</p>
 <p>King County's public data download does not include total positive test results, so instead of that simple metric, I am using the definition of &ldquo;positive test rate&rdquo; that divides the unique-person metrics of <em>New cases</em> and <em>Tests</em>.  The unique-person metric is usually much higher in magnitude than the per-test metric that is reported by the county, but the shapes of the two curves are quite similar.</p>
 
 <p>See King County's <a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary/extracts.aspx">data definitions and notes</a> for more details on each metric.</p>
@@ -272,7 +273,7 @@ ${positive_test_rate_plot}
 		<tr><td>Availability:</td><td class="not-first-column">Every Tuesday</td></tr>
 		<tr class="border-bottom"><td>Last pulled:</td><td class="not-first-column"><strong>${king_county_pull_date}</strong></td></tr>
 		<tr><td>Source:</td><td class="not-first-column"><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td></tr>
-		<tr><td>Used for:</td><td class="not-first-column"><ul><li>New cases (recent)</li><li>Deaths</li></ul></td></tr>
+		<tr><td>Used for:</td><td class="not-first-column"><ul><li>New cases (recent)</li><li>Deaths (recent)</li></ul></td></tr>
 		<tr><td>Availability:</td><td class="not-first-column">Many times per day</td></tr>
 		<tr class="border-bottom"><td>Last pulled:</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
 	</tbody>
