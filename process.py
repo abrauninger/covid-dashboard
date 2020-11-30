@@ -22,7 +22,9 @@ class KingCountyData(NamedTuple):
 	deaths: pd.DataFrame
 	deaths_last_good_date: datetime.date
 	tests: pd.DataFrame
+	tests_last_good_date: datetime.date
 	positive_test_rate: pd.DataFrame
+	positive_test_rate_last_good_date: datetime.date
 
 
 def min_max_dates(date_serieses):
@@ -134,6 +136,12 @@ def read_kc_data():
 	deaths_last_good_date = min_max_dates([kc_deaths['Death_Date']]).max_date - datetime.timedelta(days=7)
 	kc_deaths['Moving_Average_7_Day'] = np.where(kc_deaths['Death_Date'] > deaths_last_good_date, np.nan, kc_deaths['Moving_Average_7_Day'])
 
+	tests_last_good_date = min_max_dates([kc_test['Result_Date']]).max_date - datetime.timedelta(days=7)
+	kc_test['Moving_Average_7_Day'] = np.where(kc_test['Result_Date'] > tests_last_good_date, np.nan, kc_test['Moving_Average_7_Day'])
+
+	positive_test_rate_last_good_date = min_max_dates([joined['Result_Date']]).max_date - datetime.timedelta(days=7)
+	joined['positive_test_rate_moving_average_7_day'] = np.where(joined['Result_Date'] > positive_test_rate_last_good_date, np.nan, joined['positive_test_rate_moving_average_7_day'])
+
 	# TODO: Return just one DataFrame
 	return KingCountyData(
 		positives=kc_pos,
@@ -143,7 +151,9 @@ def read_kc_data():
 		deaths=kc_deaths,
 		deaths_last_good_date=deaths_last_good_date,
 		tests=kc_test,
-		positive_test_rate=joined)
+		tests_last_good_date=tests_last_good_date,
+		positive_test_rate=joined,
+		positive_test_rate_last_good_date=positive_test_rate_last_good_date)
 
 
 def plot_html(fig, date_range):
@@ -310,6 +320,11 @@ def plot_with_plotly(
 			line=dict(width=2, color=black)
 		)
 	)
+	add_date_range_highlight(
+		tests_fig,
+		start_date=data.tests_last_good_date,
+		end_date=date_range.max_date,
+		color=recent_highlight_color)
 
 	positive_test_rate_fig = go.Figure()
 	positive_test_rate_fig.add_trace(
@@ -328,6 +343,12 @@ def plot_with_plotly(
 			line=dict(width=2, color=black)
 		)
 	)
+	add_date_range_highlight(
+		positive_test_rate_fig,
+		start_date=data.positive_test_rate_last_good_date,
+		end_date=date_range.max_date,
+		color=recent_highlight_color)
+
 	positive_test_rate_fig.update_yaxes(range=[0, 0.4])
 	positive_test_rate_fig.update_layout(yaxis_tickformat='%')
 
