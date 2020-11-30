@@ -20,6 +20,7 @@ class KingCountyData(NamedTuple):
 	hospitalizations: pd.DataFrame
 	hospitalizations_last_good_date: datetime.date
 	deaths: pd.DataFrame
+	deaths_last_good_date: datetime.date
 	tests: pd.DataFrame
 	positive_test_rate: pd.DataFrame
 
@@ -130,6 +131,9 @@ def read_kc_data():
 	hospitalizations_last_good_date = min_max_dates([kc_hosp['Admission_Date']]).max_date - datetime.timedelta(days=7)
 	kc_hosp['Moving_Average_7_Day'] = np.where(kc_hosp['Admission_Date'] > hospitalizations_last_good_date, np.nan, kc_hosp['Moving_Average_7_Day'])
 	
+	deaths_last_good_date = min_max_dates([kc_deaths['Death_Date']]).max_date - datetime.timedelta(days=7)
+	kc_deaths['Moving_Average_7_Day'] = np.where(kc_deaths['Death_Date'] > deaths_last_good_date, np.nan, kc_deaths['Moving_Average_7_Day'])
+
 	# TODO: Return just one DataFrame
 	return KingCountyData(
 		positives=kc_pos,
@@ -137,6 +141,7 @@ def read_kc_data():
 		hospitalizations=kc_hosp,
 		hospitalizations_last_good_date=hospitalizations_last_good_date,
 		deaths=kc_deaths,
+		deaths_last_good_date=deaths_last_good_date,
 		tests=kc_test,
 		positive_test_rate=joined)
 
@@ -282,6 +287,11 @@ def plot_with_plotly(
 			line=dict(width=2, color=black)
 		)
 	)
+	add_date_range_highlight(
+		deaths_fig,
+		start_date=data.deaths_last_good_date,
+		end_date=date_range.max_date,
+		color=recent_highlight_color)
 
 	tests_fig = go.Figure()
 	tests_fig.add_trace(
