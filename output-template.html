@@ -196,7 +196,15 @@ ${positive_test_rate_plot}
 <p class="source-attribution">Source: King County Department of Health</p>
 
 
-<h2>Data sources</h2>
+<h2>Definitions</h2>
+
+<p><strong>New cases:</strong> Unique people receiving a positive test result each day</p>
+<p><strong>Tests:</strong> Unique people receiving a test result each day</p>
+<p><strong>Positive test rate:</strong> <em>New cases</em> divided by <em>Tests</em>.</p>
+<p>Note that a more straightforward way to calculate positive test rate would be <em>Positive test results</em> (which might count one a single person more than once) divided by <em>Total tests</em> (which might also count a single person more than once). King County does not report positive test results &mdash; only unique people tested &mdash; so I am using the unique-person metrics to calculate positivity rate.</p>
+
+
+<h2 class="h2-at-end-of-page">Data sources</h2>
 
 <table class="data-sources-desktop">
 	<thead>
@@ -210,14 +218,14 @@ ${positive_test_rate_plot}
 
 <table class="data-sources-mobile">
 	<tbody>
-		<tr><td class="source-label">Source:</td><td class="not-first-column"><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td></tr>
-		<tr><td class="source-label">Used for:</td><td class="not-first-column"><ul><li>New cases</li><li>Hospitalizations</li><li>Tests</li><li>Deaths</li></ul></td></tr>
-		<tr><td class="source-label">Availability:</td><td class="not-first-column">Every Tuesday</td></tr>
-		<tr class="border-bottom"><td class="source-label">Last pulled:</td><td class="not-first-column"><strong>${king_county_pull_date}</strong></td></tr>
-		<tr><td class="source-label">Source:</td><td class="not-first-column"><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td></tr>
-		<tr><td class="source-label">Used for:</td><td class="not-first-column"><ul><li>New cases (recent)</li><li>Deaths</li></ul></td></tr>
-		<tr><td class="source-label">Availability:</td><td class="not-first-column">Many times per day</td></tr>
-		<tr class="border-bottom"><td class="source-label">Last pulled:</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
+		<tr><td>Source:</td><td class="not-first-column"><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td></tr>
+		<tr><td>Used for:</td><td class="not-first-column"><ul><li>New cases</li><li>Hospitalizations</li><li>Tests</li><li>Deaths</li></ul></td></tr>
+		<tr><td>Availability:</td><td class="not-first-column">Every Tuesday</td></tr>
+		<tr class="border-bottom"><td>Last pulled:</td><td class="not-first-column"><strong>${king_county_pull_date}</strong></td></tr>
+		<tr><td>Source:</td><td class="not-first-column"><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td></tr>
+		<tr><td>Used for:</td><td class="not-first-column"><ul><li>New cases (recent)</li><li>Deaths</li></ul></td></tr>
+		<tr><td>Availability:</td><td class="not-first-column">Many times per day</td></tr>
+		<tr class="border-bottom"><td>Last pulled:</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
 	</tbody>
 </table>
 
