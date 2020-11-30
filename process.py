@@ -195,7 +195,7 @@ def add_date_range_highlight(fig, start_date, end_date, color):
 		y1=1,
 		line=dict(color='rgba(0,0,0,0)',width=3,),
 		fillcolor=color,
-		layer='below')
+		layer='above')
 
 
 def plot_with_plotly(
