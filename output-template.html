@@ -210,15 +210,8 @@ ${positive_test_rate_plot}
 <div class="plot-notes">
 <p><strong>Notes:</strong></p>
 <ul>
-	<li><strong>Positive test rate</strong> is calculated as the ratio of two numbers:
-		<ul>
-			<li><strong>New cases</strong>: Unique people who received a positive test result</li>
-			<li><strong>Tests</strong>: Unique people who received <em>any</em> test result on a certain day</li>
-		</ul>
-	</li>
-	<li>This definition differs from King County's own &ldquo;Test positivity&rdquo; metric.  It&rsquo;s unclear to me how King County calculates &ldquo;test positivity,&rdquo; but I presume it is calculated as the percentage of total test results that are positive.  This metric would potentially double-count individuals who are tested more than once.</li>
-	<li>King County's public data download does not include total positive test results, so instead of that simple metric, I am using the definition of &ldquo;positive test rate&rdquo; that divides the unique-person metrics of <em>New cases</em> and <em>Tests</em>.  The unique-person metric is usually much higher than the per-test metric that is reported by the county, but the shapes of the two curves are quite similar.</li>
-	<li>See King County's <a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary/extracts.aspx">data definitions and notes</a>.</li>
+	<li>This plot is drawn using data from the King County Department of Health, but it differs significantly in magnitude from the county's own &ldquo;test positivity&rdquo; metric.</li>
+	<li>See <strong>Definitions</strong> below for more details.</li>
 </ul>
 </div>
 
@@ -229,9 +222,9 @@ ${positive_test_rate_plot}
 <p><strong>Tests:</strong> Unique people receiving a test result each day.</p>
 <p><strong>Positive test rate:</strong> <em>New cases</em> divided by <em>Tests</em>.</p>
 <p>Note this definition of positive test rate differs from King County's own &ldquo;Test positivity&rdquo; metric.  It&rsquo;s unclear to me how King County calculates &ldquo;test positivity,&rdquo; but I presume it is calculated as the percentage of total test results that are positive.  This metric would potentially double-count individuals who are tested more than once.</p>
-<p>King County's public data download does not include total positive test results, so instead of that simple metric, I am using the definition of &ldquo;positive test rate&rdquo; that divides the unique-person metrics of <em>New cases</em> and <em>Tests</em>.  The unique-person metric is usually much higher than the per-test metric that is reported by the county, but the shapes of the two curves are quite similar.</p>
+<p>King County's public data download does not include total positive test results, so instead of that simple metric, I am using the definition of &ldquo;positive test rate&rdquo; that divides the unique-person metrics of <em>New cases</em> and <em>Tests</em>.  The unique-person metric is usually much higher in magnitude than the per-test metric that is reported by the county, but the shapes of the two curves are quite similar.</p>
 
-<p>See King County's <a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary/extracts.aspx">data definitions and notes</a>.</p>
+<p>See King County's <a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary/extracts.aspx">data definitions and notes</a> for more details on each metric.</p>
 
 
 <h2 class="h2-at-end-of-page">Data sources</h2>
