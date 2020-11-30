@@ -128,7 +128,8 @@ def read_kc_data():
 		kc_pos['Positives'] = np.where(kc_pos['Positives'].isnull(), kc_pos['Positives_Projected'], kc_pos['Positives'])
 
 	hospitalizations_last_good_date = min_max_dates([kc_hosp['Admission_Date']]).max_date - datetime.timedelta(days=7)
-
+	kc_hosp['Moving_Average_7_Day'] = np.where(kc_hosp['Admission_Date'] > hospitalizations_last_good_date, np.nan, kc_hosp['Moving_Average_7_Day'])
+	
 	# TODO: Return just one DataFrame
 	return KingCountyData(
 		positives=kc_pos,
