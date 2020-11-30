@@ -15,7 +15,6 @@ class KingCountyData(NamedTuple):
 	deaths: pd.DataFrame
 	tests: pd.DataFrame
 	positive_test_rate: pd.DataFrame
-	positive_test_rate_2: pd.DataFrame
 
 
 class SanDiegoData(NamedTuple):
@@ -94,8 +93,7 @@ def read_kc_data():
 		hospitalizations=kc_hosp,
 		deaths=kc_deaths,
 		tests=kc_test,
-		positive_test_rate=joined,
-		positive_test_rate_2=joined_2)
+		positive_test_rate=joined_2)
 
 
 def read_sd_data():
@@ -176,7 +174,7 @@ def plot_with_plotly(
 	axis_tickmark_font_size = 22
 	subplot_title_font_size = 30
 
-	date_range_series = [data.cases_and_deaths_nyt['date'], data.hospitalizations['Admission_Date'], data.tests['Result_Date'], data.positive_test_rate['date']]
+	date_range_series = [data.cases_and_deaths_nyt['date'], data.positives['Result_Date'], data.hospitalizations['Admission_Date'], data.tests['Result_Date'], data.positive_test_rate['Result_Date']]
 
 	date_range = min_max_dates(date_range_series)
 
@@ -256,16 +254,16 @@ def plot_with_plotly(
 	positive_test_rate_fig.add_trace(
 		go.Bar(
 			name='Daily count',
-			x=data.positive_test_rate_2['Result_Date'],
-			y=data.positive_test_rate_2['positive_test_rate'],
+			x=data.positive_test_rate['Result_Date'],
+			y=data.positive_test_rate['positive_test_rate'],
 			marker=dict(color=cols[4])
 		)
 	)
 	positive_test_rate_fig.add_trace(
 		go.Scatter(
 			name='7-day average',
-			x=data.positive_test_rate_2['Result_Date'],
-			y=data.positive_test_rate_2['positive_test_rate_moving_average_7_day'],
+			x=data.positive_test_rate['Result_Date'],
+			y=data.positive_test_rate['positive_test_rate_moving_average_7_day'],
 			line=dict(width=2, color=black)
 		)
 	)
