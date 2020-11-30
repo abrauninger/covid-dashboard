@@ -14,6 +14,21 @@
 		font-family: 'Source Serif Pro', serif;
 	}
 
+	h2 {
+		margin-top: 36px;
+	}
+
+	/*.plot-sub-header {
+		margin-top: 0px;
+		font-size: 14px;	
+	}*/
+
+	.plot-sub-header {
+		/*font-family: 'Open Sans', verdana, arial, sans-serif;*/
+		font-size: 14px;
+		margin-top: 4px;
+	}
+
 	table {
 		border-top: 1px solid #ccc;
 		border-bottom: 1px solid #ccc;
@@ -74,7 +89,7 @@
 
 	.source-attribution {
 		text-align: right;
-		font-family: 'Source Sans', sans-serif;
+		font-family: 'Open Sans', verdana, arial, sans-serif;
 		font-size: 12px;
 		font-style: italic;
 		margin-top: 4px;
@@ -86,10 +101,6 @@
 		background-color: #eee;
 		padding-left: 6px;
 		padding-right: 6px;
-	}
-
-	.h2-at-end-of-page {
-		margin-top: 36px;
 	}
 
 	.mask-up-img {
@@ -153,10 +164,15 @@
 
 <h1>COVID-19 metrics for King County, WA</h1>
 
+<p>A more readable and more mobile-friendly version of the <a href="https://public.tableau.com/profile/public.health.seattle.king.county.covid#!/vizhome/PHSKCOverviewDashboard/Overview">King County COVID-19 Dashboard</a>.
+
+<p>Note that the King County dashboard has more recent data and shows more metrics.  But good luck using it on your phone. &#128512</p>
+
 <p>Last updated <strong>${page_updated_date}</strong>.</p>
 
 
 <h2>New cases</h2>
+<p class="plot-sub-header">Unique people receiving a positive test result each day:</p>
 
 <div class="plot-container">
 ${new_cases_plot}
@@ -189,6 +205,7 @@ ${tests_plot}
 
 
 <h2>Positive test rate</h2>
+<p class="plot-sub-header">Out of all the unique people receiving test results each day, the precentage of those people for whom a test result was positive.  (See notes below on how this differs from King County's own "Test positivity" metric.)</p>
 
 <div class="plot-container">
 ${positive_test_rate_plot}
@@ -202,8 +219,10 @@ ${positive_test_rate_plot}
 <p><strong>New cases:</strong> Unique people receiving a positive test result each day.</p>
 <p><strong>Tests:</strong> Unique people receiving a test result each day.</p>
 <p><strong>Positive test rate:</strong> <em>New cases</em> divided by <em>Tests</em>.</p>
-<p>Note this definition of positive test rate differs from King County's own &ldquo;Test positivity&rdquo; metric.  It&rsquo;s unclear to me how King County calculates "test positivity," but I presume it is calculated as the percentage of total test results that are positive.  This metric would potentially double-count individuals who are tested more than once.</p>
+<p>Note this definition of positive test rate differs from King County's own &ldquo;Test positivity&rdquo; metric.  It&rsquo;s unclear to me how King County calculates &ldquo;test positivity,&rdquo; but I presume it is calculated as the percentage of total test results that are positive.  This metric would potentially double-count individuals who are tested more than once.</p>
 <p>King County's public data download does not include total positive test results, so instead of that simple metric, I am using the definition of &ldquo;positive test rate&rdquo; that divides the unique-person metrics of <em>New cases</em> and <em>Tests</em>.  The unique-person metric is usually much higher than the per-test metric that is reported by the county, but the shapes of the two curves are quite similar.</p>
+
+<p>See King County's <a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary/extracts.aspx">data definitions and notes</a>.</p>
 
 
 <h2 class="h2-at-end-of-page">Data sources</h2>
