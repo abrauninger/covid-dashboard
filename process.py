@@ -72,19 +72,9 @@ def read_kc_data():
 	kc_deaths = kc_deaths[kc_deaths['Death_Date'].notnull()]
 	kc_deaths['Moving_Average_7_Day'] = kc_deaths['Deaths'].rolling(7).mean()
 
-	joined = kc_nyt.join(kc_test.set_index('Result_Date'), on='date')
-	joined['positive_test_rate'] = joined['new_cases'] / joined['People_Tested']
+	joined = kc_pos.join(kc_test.set_index('Result_Date'), on='Result_Date', lsuffix='_pos', rsuffix='test')
+	joined['positive_test_rate'] = joined['Positives'] / joined['People_Tested']
 	joined['positive_test_rate_moving_average_7_day'] = joined['positive_test_rate'].rolling(7).mean()
-
-	joined_2 = kc_pos.join(kc_test.set_index('Result_Date'), on='Result_Date', lsuffix='_pos', rsuffix='test')
-	joined_2['positive_test_rate'] = joined_2['Positives'] / joined_2['People_Tested']
-	joined_2['positive_test_rate_moving_average_7_day'] = joined_2['positive_test_rate'].rolling(7).mean()
-
-	joined_3 = kc_nyt.join(kc_pos.set_index('Result_Date'), on='date')
-	joined_3['ratio'] = joined_3['new_cases'] / joined_3['Positives']
-
-	joined_4 = kc_nyt.join(kc_deaths.set_index('Death_Date'), on='date')
-	joined_4['ratio'] = joined_4['new_deaths'] / joined_4['Deaths']
 
 	# TODO: Return just one DataFrame
 	return KingCountyData(
@@ -93,7 +83,7 @@ def read_kc_data():
 		hospitalizations=kc_hosp,
 		deaths=kc_deaths,
 		tests=kc_test,
-		positive_test_rate=joined_2)
+		positive_test_rate=joined)
 
 
 def read_sd_data():
