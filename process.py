@@ -18,6 +18,7 @@ class KingCountyData(NamedTuple):
 	positives: pd.DataFrame
 	positives_last_good_date: datetime.date
 	hospitalizations: pd.DataFrame
+	hospitalizations_last_good_date: datetime.date
 	deaths: pd.DataFrame
 	tests: pd.DataFrame
 	positive_test_rate: pd.DataFrame
@@ -126,11 +127,14 @@ def read_kc_data():
 
 		kc_pos['Positives'] = np.where(kc_pos['Positives'].isnull(), kc_pos['Positives_Projected'], kc_pos['Positives'])
 
+	hospitalizations_last_good_date = min_max_dates([kc_hosp['Admission_Date']]).max_date - datetime.timedelta(days=7)
+
 	# TODO: Return just one DataFrame
 	return KingCountyData(
 		positives=kc_pos,
 		positives_last_good_date=new_cases_date_range_kc.max_date,
 		hospitalizations=kc_hosp,
+		hospitalizations_last_good_date=hospitalizations_last_good_date,
 		deaths=kc_deaths,
 		tests=kc_test,
 		positive_test_rate=joined)
@@ -179,6 +183,20 @@ def format_date(date: datetime.date):
 	return f'{date.month}/{date.day}/{date.year:4d}'
 
 
+def add_date_range_highlight(fig, start_date, end_date, color):
+	fig.add_shape(
+		type='rect',
+		xref='x',
+		yref='paper',
+		x0=start_date,
+		y0=0,
+		x1=end_date,
+		y1=1,
+		line=dict(color='rgba(0,0,0,0)',width=3,),
+		fillcolor=color,
+		layer='below')
+
+
 def plot_with_plotly(
 	data,
 	nytimes_pull_date: str,
@@ -217,17 +235,11 @@ def plot_with_plotly(
 			line=dict(width=2, color=black)
 		)
 	)
-	new_cases_fig.add_shape(
-		type='rect',
-		xref='x',
-		yref='paper',
-		x0=data.positives_last_good_date,
-		y0=0,
-		x1=date_range.max_date,
-		y1=1,
-		line=dict(color='rgba(0,0,0,0)',width=3,),
-		fillcolor=recent_highlight_color,
-		layer='below')
+	add_date_range_highlight(
+		new_cases_fig,
+		start_date=data.positives_last_good_date,
+		end_date=date_range.max_date,
+		color=recent_highlight_color)
 
 	hospitalizations_fig = go.Figure()
 	hospitalizations_fig.add_trace(
@@ -246,6 +258,11 @@ def plot_with_plotly(
 			line=dict(width=2, color=black)
 		)
 	)
+	add_date_range_highlight(
+		hospitalizations_fig,
+		start_date=data.hospitalizations_last_good_date,
+		end_date=date_range.max_date,
+		color=recent_highlight_color)
 
 	deaths_fig = go.Figure()
 	deaths_fig.add_trace(
