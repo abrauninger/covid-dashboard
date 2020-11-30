@@ -18,17 +18,6 @@
 		margin-top: 36px;
 	}
 
-	/*.plot-sub-header {
-		margin-top: 0px;
-		font-size: 14px;	
-	}*/
-
-	.plot-sub-header {
-		/*font-family: 'Open Sans', verdana, arial, sans-serif;*/
-		font-size: 14px;
-		margin-top: 4px;
-	}
-
 	table {
 		border-top: 1px solid #ccc;
 		border-bottom: 1px solid #ccc;
@@ -85,6 +74,10 @@
 
 	.plot-container {
 		height: 200px;
+	}
+
+	.plot-notes {
+		font-size: 14px;
 	}
 
 	.source-attribution {
@@ -168,24 +161,30 @@
 
 <p>Note that the King County dashboard has more recent data and shows more metrics.  But good luck using it on your phone. &#128512</p>
 
+<p>Most data on this page is from the King County Department of Health, with some supplemental data from the New York Times.</p>
+
 <p>Last updated <strong>${page_updated_date}</strong>.</p>
 
 
 <h2>New cases</h2>
-<p class="plot-sub-header">Unique people receiving a positive test result each day:</p>
 
 <div class="plot-container">
 ${new_cases_plot}
 </div>
-<p class="source-attribution">Sources: King County Department of Health, New York Times (recent days)</p>
 
+<div class="plot-notes">
+<p><strong>Notes:</strong></p>
+<ul>
+	<li>For the shaded area, data is not yet available from the King County Department of Health (although it may be available to view on the <a href="https://public.tableau.com/profile/public.health.seattle.king.county.covid#!/vizhome/PHSKCOverviewDashboard/Overview">county's down dashboard</a>).</li>
+	<li>The shaded area is filled in with data from the New York Times's dataset for King County, scaled slightly to represent the average discrepancy between the two datasets.</li>
+</ul>
+</div>
 
 <h2>Hospitalizations</h2>
 
 <div class="plot-container">
 ${hospitalizations_plot}
 </div>
-<p class="source-attribution">Source: King County Department of Health</p>
 
 
 <h2>Deaths</h2>
@@ -193,7 +192,6 @@ ${hospitalizations_plot}
 <div class="plot-container">
 ${deaths_plot}
 </div>
-<p class="source-attribution">Source: King County Department of Health</p>
 
 
 <h2>Tests</h2>
@@ -201,17 +199,28 @@ ${deaths_plot}
 <div class="plot-container">
 ${tests_plot}
 </div>
-<p class="source-attribution">Source: King County Department of Health</p>
 
 
 <h2>Positive test rate</h2>
-<p class="plot-sub-header">Out of all the unique people receiving test results each day, the precentage of those people for whom a test result was positive.  (See notes below on how this differs from King County's own "Test positivity" metric.)</p>
 
 <div class="plot-container">
 ${positive_test_rate_plot}
 </div>
-<p class="source-attribution">Source: King County Department of Health</p>
-<p class="source-attribution">See notes below on how this differs from King County's own "Test positivity" metric</p>
+
+<div class="plot-notes">
+<p><strong>Notes:</strong></p>
+<ul>
+	<li><strong>Positive test rate</strong> is calculated as the ratio of two numbers:
+		<ul>
+			<li><strong>New cases</strong>: Unique people who received a positive test result</li>
+			<li><strong>Tests</strong>: Unique people who received <em>any</em> test result on a certain day</li>
+		</ul>
+	</li>
+	<li>This definition differs from King County's own &ldquo;Test positivity&rdquo; metric.  It&rsquo;s unclear to me how King County calculates &ldquo;test positivity,&rdquo; but I presume it is calculated as the percentage of total test results that are positive.  This metric would potentially double-count individuals who are tested more than once.</li>
+	<li>King County's public data download does not include total positive test results, so instead of that simple metric, I am using the definition of &ldquo;positive test rate&rdquo; that divides the unique-person metrics of <em>New cases</em> and <em>Tests</em>.  The unique-person metric is usually much higher than the per-test metric that is reported by the county, but the shapes of the two curves are quite similar.</li>
+	<li>See King County's <a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary/extracts.aspx">data definitions and notes</a>.</li>
+</ul>
+</div>
 
 
 <h2>Definitions</h2>
