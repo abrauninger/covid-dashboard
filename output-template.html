@@ -24,10 +24,6 @@
 		display: none;
 	}
 
-	table.data-sources-mobile {
-		margin-bottom: 48px;
-	}
-
 	tr.border-bottom {
 		border-bottom: 1px solid #ccc;
 	}
@@ -160,32 +156,6 @@
 <p>Last updated <strong>${page_updated_date}</strong>.</p>
 
 
-<h2>Data sources</h2>
-
-<table class="data-sources-desktop">
-	<thead>
-		<tr class="border-bottom"><th>Source</th><th class="not-first-column">Used for</th><th class="not-first-column">Availability</th><th class="not-first-column">Last pulled</th></tr>
-	</thead>
-	<tbody>
-		<tr class="border-bottom"><td><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td><td class="not-first-column"><ul><li>New cases</li><li>Hospitalizations</li><li>Tests</li></ul></td><td class="not-first-column">Every Tuesday</td><td class="not-first-column"><strong>${king_county_pull_date}</strong></td></tr>
-		<tr><td><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td><td class="not-first-column"><ul><li>New cases (recent)</li><li>Deaths</li></ul></td><td class="not-first-column">Many times per day</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
-	</tbody>
-</table>
-
-<table class="data-sources-mobile">
-	<tbody>
-		<tr><td class="source-label">Source:</td><td class="not-first-column"><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td></tr>
-		<tr><td class="source-label">Used for:</td><td class="not-first-column"><ul><li>New cases</li><li>Hospitalizations</li><li>Tests</li></ul></td></tr>
-		<tr><td class="source-label">Availability:</td><td class="not-first-column">Every Tuesday</td></tr>
-		<tr class="border-bottom"><td class="source-label">Last pulled:</td><td class="not-first-column"><strong>${king_county_pull_date}</strong></td></tr>
-		<tr><td class="source-label">Source:</td><td class="not-first-column"><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td></tr>
-		<tr><td class="source-label">Used for:</td><td class="not-first-column"><ul><li>New cases (recent)</li><li>Deaths</li></ul></td></tr>
-		<tr><td class="source-label">Availability:</td><td class="not-first-column">Many times per day</td></tr>
-		<tr class="border-bottom"><td class="source-label">Last pulled:</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
-	</tbody>
-</table>
-
-
 <h2>New cases</h2>
 
 <div class="plot-container">
@@ -207,7 +177,7 @@ ${hospitalizations_plot}
 <div class="plot-container">
 ${deaths_plot}
 </div>
-<p class="source-attribution">Source: New York Times</p>
+<p class="source-attribution">Source: King County Department of Health</p>
 
 
 <h2>Tests</h2>
@@ -226,7 +196,37 @@ ${positive_test_rate_plot}
 <p class="source-attribution">Source: King County Department of Health</p>
 
 
-<h2>Source code</h2>
+<h2>Data sources</h2>
+
+<table class="data-sources-desktop">
+	<thead>
+		<tr class="border-bottom"><th>Source</th><th class="not-first-column">Used for</th><th class="not-first-column">Availability</th><th class="not-first-column">Last pulled</th></tr>
+	</thead>
+	<tbody>
+		<tr class="border-bottom"><td><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td><td class="not-first-column"><ul><li>New cases</li><li>Hospitalizations</li><li>Tests</li><li>Deaths</li></ul></td><td class="not-first-column">Every Tuesday</td><td class="not-first-column"><strong>${king_county_pull_date}</strong></td></tr>
+		<tr><td><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td><td class="not-first-column"><ul><li>New cases (recent)</li><li>Deaths (recent)</li></ul></td><td class="not-first-column">Many times per day</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
+	</tbody>
+</table>
+
+<table class="data-sources-mobile">
+	<tbody>
+		<tr><td class="source-label">Source:</td><td class="not-first-column"><a href="https://www.kingcounty.gov/depts/health/covid-19/data/daily-summary.aspx">King County Department of Health</a></td></tr>
+		<tr><td class="source-label">Used for:</td><td class="not-first-column"><ul><li>New cases</li><li>Hospitalizations</li><li>Tests</li><li>Deaths</li></ul></td></tr>
+		<tr><td class="source-label">Availability:</td><td class="not-first-column">Every Tuesday</td></tr>
+		<tr class="border-bottom"><td class="source-label">Last pulled:</td><td class="not-first-column"><strong>${king_county_pull_date}</strong></td></tr>
+		<tr><td class="source-label">Source:</td><td class="not-first-column"><a href="https://github.com/nytimes/covid-19-data">New York Times</a></td></tr>
+		<tr><td class="source-label">Used for:</td><td class="not-first-column"><ul><li>New cases (recent)</li><li>Deaths</li></ul></td></tr>
+		<tr><td class="source-label">Availability:</td><td class="not-first-column">Many times per day</td></tr>
+		<tr class="border-bottom"><td class="source-label">Last pulled:</td><td class="not-first-column"><strong>${nytimes_pull_date}</strong></td></tr>
+	</tbody>
+</table>
+
+<p>The King County Department of Health has the highest quality data but only updates weekly (and sometimes less frequently than that).</p>
+
+<p>For recent data, I use the New York Times data which updates daily; it is noisier than the King County data but over time it tracks reasonably closely with the King County data, so it can serve as a good approximation for recent days that haven't been reported yet by the King County Department of Health.</p>
+
+
+<h2 class="h2-at-end-of-page">Source code</h2>
 
 <p>The code that generated this page is available in the <a href="https://github.com/abrauninger/covid-dashboard"><code>covid-dashboard</code></a> repository on GitHub.</p>
 

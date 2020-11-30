@@ -9,16 +9,17 @@ from typing import NamedTuple
 
 
 class KingCountyData(NamedTuple):
-	cases_and_deaths: pd.DataFrame
-	hospitalizations: pd.DataFrame
+	cases_and_deaths_nyt: pd.DataFrame
 	positives: pd.DataFrame
+	hospitalizations: pd.DataFrame
+	deaths: pd.DataFrame
 	tests: pd.DataFrame
 	positive_test_rate: pd.DataFrame
 	positive_test_rate_2: pd.DataFrame
 
 
 class SanDiegoData(NamedTuple):
-	cases_and_deaths: pd.DataFrame
+	cases_and_deaths_nyt: pd.DataFrame
 
 
 def read_nytimes_data(state: str, county: str):
@@ -41,12 +42,18 @@ def read_nytimes_data(state: str, county: str):
 
 
 def read_kc_data():
-	kc = read_nytimes_data(state='Washington', county='King')
+	kc_nyt = read_nytimes_data(state='Washington', county='King')
 
 	#kc_xlsx_file = 'king-county-data-download/covid-data-daily-counts-2020-09-08.xlsx'
 
 	# `read_excel` appears to have a bug that silently drops recent data from the xlsx file, for some reason
 	# For now, work around this by reading from CSV instead
+	
+	#kc_pos = pd.read_excel(kc_xlsx_file, sheet_name='Positives')
+	kc_pos = pd.read_csv('king-county-data-download/daily-counts-and-rate-latest-positives.csv')
+	kc_pos['Result_Date'] = pd.to_datetime(kc_pos['Result_Date'])		# Not necessary when using `read_excel`
+	kc_pos = kc_pos[kc_pos['Result_Date'].notnull()]
+	kc_pos['Moving_Average_7_Day'] = kc_pos['Positives'].rolling(7).mean()
 
 	#kc_hosp = pd.read_excel(kc_xlsx_file, sheet_name='Hospitalizations')
 	kc_hosp = pd.read_csv('king-county-data-download/daily-counts-and-rate-latest-hospitalizations.csv')
@@ -60,13 +67,13 @@ def read_kc_data():
 	kc_test = kc_test[kc_test['Result_Date'].notnull()]
 	kc_test['Moving_Average_7_Day'] = kc_test['People_Tested'].rolling(7).mean()
 	
-	#kc_hosp = pd.read_excel(kc_xlsx_file, sheet_name='Positives')
-	kc_pos = pd.read_csv('king-county-data-download/daily-counts-and-rate-latest-positives.csv')
-	kc_pos['Result_Date'] = pd.to_datetime(kc_pos['Result_Date'])		# Not necessary when using `read_excel`
-	kc_pos = kc_pos[kc_pos['Result_Date'].notnull()]
-	kc_pos['Moving_Average_7_Day'] = kc_pos['Positives'].rolling(7).mean()
+	#kc_deaths = pd.read_excel(kc_xlsx_file, sheet_name='Deaths')
+	kc_deaths = pd.read_csv('king-county-data-download/daily-counts-and-rate-latest-deaths.csv')
+	kc_deaths['Death_Date'] = pd.to_datetime(kc_deaths['Death_Date'])		# Not necessary when using `read_excel`
+	kc_deaths = kc_deaths[kc_deaths['Death_Date'].notnull()]
+	kc_deaths['Moving_Average_7_Day'] = kc_deaths['Deaths'].rolling(7).mean()
 
-	joined = kc.join(kc_test.set_index('Result_Date'), on='date')
+	joined = kc_nyt.join(kc_test.set_index('Result_Date'), on='date')
 	joined['positive_test_rate'] = joined['new_cases'] / joined['People_Tested']
 	joined['positive_test_rate_moving_average_7_day'] = joined['positive_test_rate'].rolling(7).mean()
 
@@ -74,22 +81,26 @@ def read_kc_data():
 	joined_2['positive_test_rate'] = joined_2['Positives'] / joined_2['People_Tested']
 	joined_2['positive_test_rate_moving_average_7_day'] = joined_2['positive_test_rate'].rolling(7).mean()
 
-	joined_3 = kc.join(kc_pos.set_index('Result_Date'), on='date')
+	joined_3 = kc_nyt.join(kc_pos.set_index('Result_Date'), on='date')
 	joined_3['ratio'] = joined_3['new_cases'] / joined_3['Positives']
+
+	joined_4 = kc_nyt.join(kc_deaths.set_index('Death_Date'), on='date')
+	joined_4['ratio'] = joined_4['new_deaths'] / joined_4['Deaths']
 
 	# TODO: Return just one DataFrame
 	return KingCountyData(
-		cases_and_deaths=kc,
-		hospitalizations=kc_hosp,
-		tests=kc_test,
+		cases_and_deaths_nyt=kc_nyt,
 		positives=kc_pos,
+		hospitalizations=kc_hosp,
+		deaths=kc_deaths,
+		tests=kc_test,
 		positive_test_rate=joined,
 		positive_test_rate_2=joined_2)
 
 
 def read_sd_data():
 	sd = read_nytimes_data(state='California', county='San Diego')
-	return SanDiegoData(cases_and_deaths=sd)
+	return SanDiegoData(cases_and_deaths_nyt=sd)
 
 
 def min_max_dates(date_serieses):
@@ -165,7 +176,7 @@ def plot_with_plotly(
 	axis_tickmark_font_size = 22
 	subplot_title_font_size = 30
 
-	date_range_series = [data.cases_and_deaths['date'], data.hospitalizations['Admission_Date'], data.tests['Result_Date'], data.positive_test_rate['date']]
+	date_range_series = [data.cases_and_deaths_nyt['date'], data.hospitalizations['Admission_Date'], data.tests['Result_Date'], data.positive_test_rate['date']]
 
 	date_range = min_max_dates(date_range_series)
 
@@ -209,16 +220,16 @@ def plot_with_plotly(
 	deaths_fig.add_trace(
 		go.Bar(
 			name='Daily count',
-			x=data.cases_and_deaths['date'],
-			y=data.cases_and_deaths['new_deaths'],
+			x=data.deaths['Death_Date'],
+			y=data.deaths['Deaths'],
 			marker=dict(color=cols[2])
 		)
 	)
 	deaths_fig.add_trace(
 		go.Scatter(
 			name='7-day average',
-			x=data.cases_and_deaths['date'],
-			y=data.cases_and_deaths['new_deaths_moving_average_7_day'],
+			x=data.deaths['Death_Date'],
+			y=data.deaths['Moving_Average_7_Day'],
 			line=dict(width=2, color=black)
 		)
 	)
@@ -258,7 +269,7 @@ def plot_with_plotly(
 			line=dict(width=2, color=black)
 		)
 	)
-	positive_test_rate_fig.update_yaxes(range=[0, 0.3])
+	positive_test_rate_fig.update_yaxes(range=[0, 0.4])
 	positive_test_rate_fig.update_layout(yaxis_tickformat='%')
 
 	# Write wrapper HTML
