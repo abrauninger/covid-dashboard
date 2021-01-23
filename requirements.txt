@@ -1,0 +1,4 @@
+mako
+numpy
+pandas
+plotly
